@@ -1,571 +1,170 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Citas Dark One (App Standalone)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Estilos base para el tema Dark One (Negro, Gris Oscuro y Dorado) */
-        :root {
-            --color-primary: #f59e0b; /* Amber 500 (Dorado) */
-            --color-secondary: #1f2937; /* Gray 800 */
-            --color-background: #111827; /* Gray 900 */
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--color-background);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda Citas Dark One</title>
 
-        /* Asegura el contraste de los iconos de fecha/hora en inputs */
-        .dark-input[type="date"]::-webkit-calendar-picker-indicator,
-        .dark-input[type="time"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-        }
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        /* Clases base del formulario */
-        .dark-card {
-            background-color: var(--color-secondary);
-            border: 1px solid #374151;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-            border-radius: 1rem; 
-        }
-        .dark-input, .dark-textarea, .dark-select {
-            background-color: #374151; /* Gray 700 */
-            border-color: #4b5563; /* Gray 600 */
-            color: #f3f4f6;
-            padding: 0.75rem; 
-            border-radius: 0.5rem; 
-            transition: all 0.2s;
-        }
-        .dark-input:focus, .dark-textarea:focus, .dark-select:focus {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 2px var(--color-primary);
-        }
-        /* Estilo para los enlaces con apariencia de botón azul de WhatsApp */
-        .whatsapp-util-button {
-            display: inline-flex;
-            align-items: center;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #f3f4f6;
-            background-color: #3b82f6; 
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            transition: all 0.15s;
-        }
-        .whatsapp-util-button:hover {
-            background-color: #2563eb; 
-        }
-    </style>
+  <style>
+    :root {
+        --color-primary: #e11d48;
+        --color-secondary: #1e1e1e;
+        --color-background: #121212;
+        --color-input: #2a2a2a;
+        --color-border: #3a3a3a;
+        --color-text: #e5e5e5;
+        --color-muted: #9ca3af;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--color-background);
+        color: var(--color-text);
+        margin: 0;
+        padding: 0;
+    }
+
+    header { text-align: center; padding: 2rem 1rem; }
+    header h1 { font-size: 1.75rem; font-weight: 700; color: var(--color-primary); margin: 0; }
+    header p { font-size: 0.95rem; color: var(--color-muted); }
+
+    .container { max-width: 800px; margin: 0 auto; padding: 1rem; }
+    .dark-card { background-color: var(--color-secondary); border: 1px solid var(--color-border); box-shadow: 0 6px 12px -2px rgba(0,0,0,0.6); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .dark-input, .dark-textarea, .dark-select { width: 100%; background-color: var(--color-input); border: 1px solid var(--color-border); color: var(--color-text); padding: 0.75rem; border-radius: 0.5rem; transition: all 0.2s; font-size: 0.95rem; margin-bottom: 1rem; }
+    .dark-input:focus, .dark-textarea:focus, .dark-select:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px var(--color-primary); outline: none; }
+    label { font-weight: 500; color: var(--color-text); margin-bottom: 0.25rem; display: block; }
+
+    .btn-primary { background-color: var(--color-primary); color: #fff; font-weight: 600; border-radius: 0.5rem; padding: 0.75rem 1rem; transition: background-color 0.2s ease; border: none; width: 100%; cursor: pointer; font-size: 1rem; }
+    .btn-primary:hover { background-color: #be123c; }
+
+    .whatsapp-util-button, .calendar-util-button { display: inline-flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #fff; padding: 0.5rem 0.75rem; border-radius: 0.5rem; transition: all 0.15s; cursor: pointer; margin-top: 0.5rem; text-decoration: none; }
+    .whatsapp-util-button { background-color: #22c55e; }
+    .whatsapp-util-button:hover { background-color: #16a34a; }
+    .calendar-util-button { background-color: #3b82f6; margin-left: 0.5rem; }
+    .calendar-util-button:hover { background-color: #2563eb; }
+
+    #outputContainer { background-color: var(--color-secondary); border: 1px solid var(--color-border); padding: 1rem; border-radius: 0.75rem; margin-top: 1.5rem; }
+    h2, h3 { color: var(--color-primary); margin-top: 0; }
+  </style>
 </head>
-<body class="bg-gray-900 min-h-screen p-4 sm:p-8">
+<body>
 
-    <div class="max-w-4xl mx-auto">
-        <header class="text-center mb-8 p-4 dark-card border-b-4 border-amber-500">
-            <h1 class="text-3xl font-extrabold text-amber-400">Agenda Citas Dark One</h1>
-            <p class="text-gray-400 text-sm">Sistema para agendar citas, generar mensajes y compartir enlaces.</p>
-        </header>
-        
-        <form id="appointmentForm" class="dark-card p-6 sm:p-8 shadow-2xl space-y-6">
-            <h2 class="text-2xl font-bold text-gray-200 border-b border-gray-700 pb-3">Detalles de la Cita</h2>
+<header>
+  <h1>Agenda Citas Dark One</h1>
+  <p>Sistema para agendar citas, generar mensajes y compartir enlaces.</p>
+</header>
 
-            <div class="grid md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Nombre Cliente <span class="text-red-500">*</span></label>
-                    <input type="text" id="clientName" placeholder="Nombre Completo" class="w-full dark-input shadow-sm" required value="">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Servicio <span class="text-red-500">*</span></label>
-                    <select id="serviceType" class="w-full dark-select shadow-sm" required>
-                        <option value="Tatuaje">Tatuaje</option>
-                        <option value="Piercing">Piercing</option>
-                        <option value="Tratamiento Granuloma">Tratamiento Granuloma</option>
-                        <option value="Piercing Menor de Edad">Piercing Menor de Edad</option>
-                        <option value="Reserva de Retoques">Reserva de Retoques</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">WhatsApp (Incluir prefijo) <span class="text-red-500">*</span></label>
-                    <input type="tel" id="clientPhone" placeholder="+56912345678" class="w-full dark-input shadow-sm" required value="+569">
-                </div>
-            </div>
+<div class="container">
+  <div class="dark-card">
+    <h2>Detalles de la Cita</h2>
+    <label for="cliente">Nombre Cliente *</label>
+    <input type="text" id="cliente" class="dark-input" placeholder="Nombre Completo">
 
-            <div class="grid md:grid-cols-3 gap-4">
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Correo Cliente <span class="text-red-500">*</span></label>
-                    <div class="relative">
-                        <input type="email" id="clientEmail" placeholder="correo" class="w-full dark-input shadow-sm pr-24" required value="">
-                        <span class="absolute right-0 top-0 mt-3 mr-3 text-gray-500 pointer-events-none">@gmail.com</span>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Abono (CLP$)</label>
-                    <input type="number" id="abono" placeholder="Ej: 50000" class="w-full dark-input shadow-sm" value="">
-                </div>
-            </div>
+    <label for="servicio">Servicio *</label>
+    <select id="servicio" class="dark-select">
+      <option>Tatuaje</option>
+      <option>Piercing</option>
+      <option>Micropigmentación</option>
+    </select>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-400 mb-1">Descripción / Notas Específicas (Se añade a Calendar)</label>
-                <textarea id="description" placeholder="Ej: Diseño de dragón en hombro. Medidas 15x10cm." class="w-full dark-textarea shadow-sm" rows="3"></textarea>
-            </div>
-            
-            <h2 class="text-2xl font-bold text-gray-200 border-b border-gray-700 pb-3 pt-4">Fecha y Horario</h2>
+    <label for="whatsapp">WhatsApp (Incluir prefijo) *</label>
+    <input type="text" id="whatsapp" class="dark-input" placeholder="+569">
 
-            <div class="grid md:grid-cols-3 gap-4">
-                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Fecha <span class="text-red-500">*</span></label>
-                    <input type="date" id="appointmentDate" class="w-full dark-input dark-input shadow-sm" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Hora de Inicio (15:00 por defecto) <span class="text-red-500">*</span></label>
-                    <input type="time" id="appointmentStartTime" class="w-full dark-input dark-input shadow-sm" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Hora de Término (30 min) <span class="text-red-500">*</span></label>
-                    <input type="time" id="appointmentEndTime" class="w-full dark-input dark-input shadow-sm" required>
-                </div>
-            </div>
+    <label for="correo">Correo Cliente *</label>
+    <input type="email" id="correo" class="dark-input" placeholder="correo@gmail.com">
 
-            <button type="submit" class="w-full flex justify-center items-center py-3 px-4 rounded-lg shadow-md text-lg font-medium text-gray-900 transition duration-200 bg-amber-500 hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 focus:ring-offset-gray-900">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-gray-900"><path d="M8 2v4"/><path d="M16 2v4"/><path d="M21 21H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2z"/><path d="M3 11h18"/></svg>
-                GENERAR MENSAJE Y ENLACES
-            </button>
-        </form>
+    <label for="abono">Abono (CLP$)</label>
+    <input type="number" id="abono" class="dark-input" placeholder="Ej: 50000">
 
-        <div id="outputContainer" class="mt-8 dark-card p-6 sm:p-8 shadow-2xl hidden">
-            
-            <div id="statusMessage" class="mb-4 p-3 rounded-lg flex items-center hidden"></div>
+    <label for="descripcion">Descripción / Notas Específicas (Se añade al Calendar)</label>
+    <textarea id="descripcion" class="dark-textarea" rows="3" placeholder="Ej: Diseño de dragón en hombro. Medidas 15x10cm."></textarea>
+  </div>
 
-            <h2 class="text-2xl font-bold text-amber-400 mb-4 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-amber-400"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
-                Acciones Finales y Vista Previa
-            </h2>
+  <div class="dark-card">
+    <h2>Fecha y Horario</h2>
+    <label for="fecha">Fecha *</label>
+    <input type="date" id="fecha" class="dark-input">
+    <label for="hora-inicio">Hora de Inicio (15:00 por defecto)</label>
+    <input type="time" id="hora-inicio" class="dark-input" value="15:00">
+    <label for="hora-fin">Hora de Término (30 min)</label>
+    <input type="time" id="hora-fin" class="dark-input" value="15:30">
+  </div>
 
-            <div class="space-y-6">
-                <div class="bg-gray-800 p-4 rounded-lg border border-red-500/50">
-                    <p class="text-sm font-semibold text-red-400 mb-2 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                        URL de Google Calendar (Copiada automáticamente - Target: <b><span id="calendarTargetName"></span></b>)
-                    </p>
-                    <p class="text-xs text-gray-400 mb-3">La descripción de Calendar ahora contiene el texto con los datos del cliente y los *detalles del servicio*.</p>
-                    <textarea id="debugUrlOutput" class="w-full dark-textarea shadow-sm text-xs" rows="3" readonly></textarea>
-                    <button id="copyUrlButton" onclick="copyToClipboard('debugUrlOutput', 'URL de Calendar')" class="mt-3 inline-flex items-center text-sm font-semibold text-gray-900 bg-red-300 hover:bg-red-400 px-3 py-1.5 rounded-lg transition duration-150">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-gray-900"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                        Copiar URL de Calendar
-                    </button>
-                </div>
+  <button class="btn-primary">📅 GENERAR MENSAJE Y ENLACES</button>
 
-                <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
-                    <p class="text-lg font-semibold text-gray-300 mb-3 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Mensaje Final de WhatsApp (Vista Previa)
-                    </p>
-                    <pre id="resumenTexto" class="whitespace-pre-wrap p-4 text-xs font-mono text-gray-100 bg-gray-900 rounded border border-gray-700 overflow-auto"></pre>
-                    
-                    <div class="mt-4 flex flex-wrap gap-3 items-center">
-                          <button id="copyButton" onclick="copyToClipboard('resumenTexto', 'Mensaje de WhatsApp')" class="inline-flex items-center text-sm font-semibold text-gray-900 bg-amber-300 hover:bg-amber-400 px-3 py-1.5 rounded-lg transition duration-150">
-                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-gray-900"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                               Copiar Mensaje
-                          </button>
-                          <a id="whatsappLink" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sm font-semibold text-white bg-green-500 hover:bg-green-600 px-3 py-1.5 rounded-lg transition duration-150">
-                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                               Abrir WhatsApp Web
-                          </a>
-                    </div>
-
-                    <h3 class="text-sm font-bold text-gray-400 mt-6 mb-2">Enlaces Rápidos para Cliente:</h3>
-                    <div class="flex flex-wrap gap-3">
-                        <a id="reviewLink" target="_blank" rel="noopener noreferrer" class="whatsapp-util-button hover:bg-red-600">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 17.5V10"/><path d="M14 13.5l-2 2-2-2"/></svg>
-                            Compartir Link de Reseñas
-                        </a>
-                        <a id="cuidadosLink" target="_blank" rel="noopener noreferrer" class="whatsapp-util-button">
-                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M15 2H9a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3Z"/><path d="M12 18h.01"/></svg>
-                             Compartir Link de Cuidados
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div id="outputContainer" class="dark-card" style="display:none;">
+    <h3>Resultado</h3>
+    <p id="outputText"></p>
+    <div>
+      <button class="whatsapp-util-button">💬 Enviar por WhatsApp</button>
+      <button class="calendar-util-button">📆 Abrir en Calendar</button>
     </div>
+  </div>
+</div>
 
-    <script>
-        // --- CONSTANTES Y CONFIGURACIÓN ---
-        const $ = id => document.getElementById(id);
-        
-        // Configuración de Calendar
-        const CALENDAR_LOCATION = 'DARK ONE / TATUAJES & PIERCINGS'; // Ubicación Solicitada
-        // IDs de calendario (src) para Calendar
-        const TATUAJE_CALENDAR_SRC = 'Citas WEBTatuajes'; 
-        const PIERCING_CALENDAR_SRC = 'Citas WEBPiercing'; 
-        const TIMEZONE_CTZ = 'America/Santiago'; // Zona horaria de Chile/Santiago 
-        const REMINDER_MINUTES = 180; // 3 Horas antes (3 * 60)
-        
-        // Enlaces fijos para compartir por WhatsApp
-        const REVIEW_URL = 'https://g.page/r/Cag5XmHF8-QOEAE/review';
-        const CUIDADOS_URL = 'https://darkone.cl/cuidados/';
+<script>
+function generarEvento() {
+    const cliente = document.getElementById("cliente").value.trim();
+    const servicio = document.getElementById("servicio").value.trim();
+    const correosInput = document.getElementById("correo").value.trim();
+    const whatsapp = document.getElementById("whatsapp").value.trim();
+    const abono = document.getElementById("abono").value.trim();
+    const descripcion = document.getElementById("descripcion").value.trim();
+    const fecha = document.getElementById("fecha").value;
+    const horaInicio = document.getElementById("hora-inicio").value;
+    const horaFin = document.getElementById("hora-fin").value;
 
-        // Enlace con formato enlace corto (Se asume que los links de forms.gle ya son cortos)
-        const getFormLink = (url) => url;
+    if (!cliente || !servicio || !correosInput || !whatsapp || !fecha) {
+        alert("Por favor, complete todos los campos obligatorios (*)");
+        return;
+    }
 
+    const correos = correosInput.split(",").map(c => c.trim()).filter(c => c !== "");
 
-        // --- DEFINICIÓN DE TEXTOS LARGOS CON FORMATO MEJORADO (Markdown/WhatsApp) ---
+    let tituloEvento = `${servicio}`;
+    if (descripcion) tituloEvento += ` / ${descripcion}`;
+    tituloEvento += ` / ${cliente}`;
+    if (abono) tituloEvento += ` / $${abono}`;
 
-        const PIERCING_DETAILS = `
-*INFORMACIÓN ESENCIAL – PIERCING (DARK ONE)*
----
-⚠️ *LECTURA Y FORMULARIO OBLIGATORIO:*
-Rellene el Formulario exigido por el Ministerio de Salud para piercing aquí:
-➡️ ${getFormLink('https://forms.gle/z4opFbEPE3Q5h72B8')}
+    const fechaInicio = new Date(`${fecha}T${horaInicio}:00`);
+    const fechaFin = new Date(`${fecha}T${horaFin}:00`);
 
-*RESERVA, PAGO Y CONDICIONES*
-* Solo para mayores de *18 años*.
-* El *Abono no es reembolsable*.
-* *Puntualidad:* Si llega tarde, el tiempo perdido podría requerir agendar con otro abono.
-* *Cambios:* Avise con *24 horas* de anticipación.
-* *Duración:* 30 minutos (aproximadamente).
-* *GiftCard:* Se descuentan *$15.000* del monto como adelanto.
+    function formatDate(d) {
+        return d.toISOString().replace(/-|:|\.\d+/g, "");
+    }
 
-*PREPARACIÓN Y SALUD*
-* Asista sin maquillaje, cremas ni lesiones en la zona.
-* *Coma e hidrátese* antes. *NO* consuma alcohol ni aspirinas *24 horas* antes.
-* *AVISAR* si padece o consume: Alergias, hemofilia, diabetes, hipertensión, enfermedad autoinmune, anticoagulantes.
+    const start = formatDate(fechaInicio);
+    const end = formatDate(fechaFin);
 
-*ACOMPAÑANTES, GARANTÍA Y RIESGOS*
-* Los acompañantes esperan *fuera* de la sala de procedimientos. *No* asistir con niños.
-* *Garantía y Controles:* Incluye *1 control gratuito* a los 30 días. Si no asiste, perderá su garantía.
-* *Riesgos:* Estos aumentan si no sigue los cuidados indicados.
-* En caso de complicaciones, dé aviso inmediato.
+    let descripcionEvento = `⭐ ${cliente} / Gracias por preferirnos ⭐\nTu cita está agendada\n\n`;
+    descripcionEvento += `Información esencial:\n${descripcion}\n\n`; 
+    descripcionEvento += `Datos de la cita:\n👤 Cliente: ${cliente}\n💉 Servicio: ${servicio}\n📅 Fecha: ${fecha} de ${horaInicio} a ${horaFin}\n💰 Abono: $${abono || "0"}\n📧 Correo(s): ${correos.join(", ")}\n📲 WhatsApp: ${whatsapp}`;
 
-🔗 *CUIDADOS Y GARANTÍA DETALLADOS:* ${getFormLink(CUIDADOS_URL)}
-Productos de la más alta calidad – DARK ONE / DARK CANDLES & SANTIAGO INK TATUAJES® Desde 2010
-        `.trim();
-
-        const TATUAJE_DETAILS = `
-*INFORMACIÓN ESENCIAL – TATUAJES (DARK ONE)*
----
-⚠️ *LECTURA Y FORMULARIO OBLIGATORIO:*
-Rellene el Formulario exigido por el Ministerio de Salud para tatuajes aquí:
-➡️ ${getFormLink('https://forms.gle/ksEmp5LmUzeCKvs39')}
-
-*RESERVA, PAGO Y CONDICIONES*
-* Solo para *mayores de edad*.
-* Las citas incluyen tiempo para montaje, revisión y modificaciones parciales.
-* Los *Abonos no son reembolsables*.
-* *Puntualidad:* Si llega tarde, pierde tiempo; si no asiste, pierde el abono.
-* *Cambios:* Avise con *24 horas* de anticipación.
-* *Reservas con GiftCard:* Se consideran *$25.000* como abono de reserva.
-
-*PREPARACIÓN Y SALUD*
-* Use *ropa cómoda*. Se recomienda llegar con la zona *depilada*.
-* *Coma e hidrátese* al menos 2 horas antes. *NO* consuma alcohol ni aspirinas *24 horas* antes.
-* *AVISAR* si padece o consume: Alergias, hemofilia, diabetes, epilepsia, hipertensión, ansiedad, anticoagulantes.
-
-*CONSEJOS Y CUIDADOS POSTERIORES*
-* Evite acompañantes.
-* *NO* recomendamos bephantol.
-* *Riesgos:* Existen riesgos si no sigue los cuidados.
-* *Complicaciones:* Dé aviso al estudio (+56932237670) y asista a un centro médico.
-
-🔗 *CUIDADOS Y GARANTÍA DETALLADOS:* ${getFormLink(CUIDADOS_URL)}
-Productos de primera calidad. DARK ONE es marca registrada de SANTIAGO INK TATUAJES & DARK CANDLES ®. Desde 2010
-        `.trim();
-
-        const GRANULOMA_DETAILS = `
-*INFORMACIÓN ESENCIAL – TRATAMIENTO DE GRANULOMAS (DARK ONE)*
----
-⚠️ *LECTURA OBLIGATORIA*
-(No requiere formulario de salud en este caso).
-
-*RESERVA, PAGO Y TRATAMIENTO*
-* Solo para mayores de *18 años*.
-* Las sesiones son cada *una semana* y cada sesión se abona por adelantado.
-* El *Abono no es reembolsable*.
-* *Puntualidad:* Si llega tarde, se pierde el tiempo asignado.
-* *Cambios:* Avise con *24 horas* de anticipación.
-* *Importante:* No podemos asegurar el número total de sesiones.
-
-*PREPARACIÓN Y SALUD*
-* Asista sin cremas ni maquillaje.
-* *Coma e hidrátese* antes. *NO* consumas alcohol ni aspirinas *24 horas* antes.
-* *AVISAR* si padece o consume: Alergias, hemofilia, diabetes, hipertensión, ansiedad, anticoagulantes.
-
-*CONSEJOS Y RIESGOS*
-* Evite acompañantes en la sala.
-* *Riesgos:* Existen riesgos de reacciones dérmicas si no sigue los cuidados.
-* En caso de complicaciones, dé aviso inmediato a Dark One y asista a un centro médico.
-
-Productos de la más alta calidad – DARK ONE / DARK CANDLES & SANTIAGO INK TATUAJES® Desde 2010.
-        `.trim();
-
-        const PIERCING_MENOR_DETAILS = `
-*INFORMACIÓN ESENCIAL – PIERCING MENOR DE EDAD (DARK ONE)*
----
-⚠️ *LECTURA Y DOBLE FORMULARIO OBLIGATORIO:*
-Complete los *DOS* formularios con los datos del menor:
-➡️ ${getFormLink('https://forms.gle/AtkD8w2YeDfUWhyW6')}
-➡️ ${getFormLink('https://forms.gle/z4opFbEPE3Q5h72B8')}
-
-*RESERVA, PAGO Y CONDICIONES*
-* El *Abono no es reembolsable*.
-* *Puntualidad:* Si llega tarde, el tiempo perdido podría requerir agendar con otro abono.
-* *Cambios:* Avise con *24 horas* de anticipación.
-* *GiftCard:* Se descuentan *$15.000* como adelanto.
-
-*TUTOR, ACOMPAÑANTES Y GARANTÍA*
-* El *tutor* es el único que debe acompañar al menor.
-* *Controles:* Incluye *1 control gratuito* al mes (de lunes a viernes). Si no asiste, pierde la garantía.
-
-*PREPARACIÓN Y CUIDADOS*
-* Asista sin cremas ni maquillaje.
-* *Coma e hidrátese* antes. *NO* consuma alcohol ni aspirinas *24 horas* antes.
-* *Informar:* Avise sobre alergias, hemofilia, diabetes o síntomas respiratorios.
-* *Cuidados:* Revise los cuidados en: ${getFormLink(CUIDADOS_URL)}
-
-Productos de la más alta calidad – DARK ONE / DARK CANDLES & SANTIAGO INK TATUAJES® Desde 2010
-        `.trim();
-
-        const RETOQUES_DETAILS = `
-*INFORMACIÓN ESENCIAL – RESERVA DE RETOQUES (DARK ONE)*
----
-(No requiere formulario de salud en este caso).
-
-*RESERVA Y CONDICIONES DE GARANTÍA*
-* *Cambios:* Debe avisar con *48 horas* de anticipación. De lo contrario, pierde la posibilidad de reagendar *sin costo*.
-* *Puntualidad:* Si llega tarde, perderá tiempo. Si *no asiste*, pierde la garantía y la opción de reagendar sin costo.
-
-*VALORES ADICIONALES (Reagendas y Extras)*
-* *Reagendar / Extra (Negro):* Costo mínimo adicional de *$15.000*.
-* *Reagendar / Extra (Color):* Costo mínimo adicional de *$25.000*.
-* Si no asiste, pierde el adicional depositado.
-
-*PREPARACIÓN Y CONSEJOS*
-* Sea *puntual*.
-* Use *ropa cómoda* y llegue con la zona *depilada*.
-* *Coma e hidrátese* al menos 2 horas antes. Evite destilados y aspirina 24 horas antes.
-* *NO* recomendamos bephantol para el cuidado.
-
-🔗 *CUIDADOS Y GARANTÍA DETALLADOS:* ${getFormLink(CUIDADOS_URL)}
-Productos de primera calidad. DARK ONE es marca registrada de SANTIAGO INK TATUAJES & DARK CANDLES ®. Desde 2010.
-        `.trim();
-
-        const SERVICE_CONTENT = {
-            'Tatuaje': { details: TATUAJE_DETAILS },
-            'Piercing': { details: PIERCING_DETAILS },
-            'Tratamiento Granuloma': { details: GRANULOMA_DETAILS },
-            'Piercing Menor de Edad': { details: PIERCING_MENOR_DETAILS },
-            'Reserva de Retoques': { details: RETOQUES_DETAILS },
-        };
-
-
-        // --- UTILIDADES Y CONFIGURACIÓN INICIAL ---
-
-        const formatDate = (dateStr) => {
-            if (!dateStr) return '';
-            const [year, month, day] = dateStr.split('-');
-            return `${day}/${month}/${year}`;
-        };
-
-        const getTodayDate = () => {
-            const now = new Date(); 
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
-
-        const calculateDefaultEndTime = (startTime) => {
-            if (!startTime) return ''; 
-            let [hours, minutes] = startTime.split(':').map(Number);
-            minutes += 30; // 30 minutos de duración por defecto
-            if (minutes >= 60) {
-                hours = (hours + 1) % 24; 
-                minutes -= 60;
-            }
-            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-        };
-
-        // Inicializar los campos de Fecha y Hora con los valores por defecto
-        const initialDate = getTodayDate();
-        const initialStartTime = '15:00'; 
-        const initialEndTime = calculateDefaultEndTime(initialStartTime);
-
-        // Se inicializan los valores al cargar la página.
-        document.addEventListener('DOMContentLoaded', () => {
-            $('appointmentDate').value = initialDate;
-            $('appointmentStartTime').value = initialStartTime;
-            $('appointmentEndTime').value = initialEndTime;
-
-            // Escucha el cambio de hora de inicio para actualizar hora de término (+30 min)
-            $('appointmentStartTime').addEventListener('input', (e) => {
-                $('appointmentEndTime').value = calculateDefaultEndTime(e.target.value);
-            });
-             // Asigna la función de generación al formulario
-            $('appointmentForm').addEventListener('submit', generateSummary);
+    let calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(tituloEvento)}&dates=${start}/${end}&details=${encodeURIComponent(descripcionEvento)}`;
+    if (correos.length > 0) {
+        correos.forEach(c => {
+            calendarUrl += `&add=${encodeURIComponent(c)}`;
         });
+    }
 
-        const formatCalendarTimeLocal = (date, time) => {
-            // Formato YYYYMMDDTHHMMSS sin Z para que Google use la hora local del usuario
-            const [year, month, day] = date.split('-');
-            const [hour, minute] = time.split(':');
-            return `${year}${month}${day}T${hour}${minute}00`;
-        };
+    const mensajeWhatsApp = `👋 Hola ${cliente}, te agendé para ${servicio}.\n📅 Fecha: ${fecha} ${horaInicio} a ${horaFin}\n💰 Abono: $${abono || "0"}\n📧 Se envió invitación al correo: ${correos.join(", ")}\n\nEnlace a tu cita: ${calendarUrl}`;
 
-        function copyToClipboard(elementId, fieldName) {
-            const element = $(elementId);
-            const textToCopy = element.value || element.textContent; 
-            const statusDiv = $('statusMessage');
-            
-            statusDiv.classList.remove('hidden', 'bg-red-600', 'text-white', 'bg-amber-500', 'text-gray-900', 'bg-purple-500');
-            statusDiv.innerHTML = '';
-            
-            try {
-                const tempTextArea = document.createElement('textarea');
-                tempTextArea.value = textToCopy;
-                tempTextArea.style.position = 'absolute';
-                tempTextArea.style.left = '-9999px';
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                
-                const success = document.execCommand('copy');
-                document.body.removeChild(tempTextArea);
+    const whatsappUrl = `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensajeWhatsApp)}`;
 
-                if (success) {
-                    statusDiv.classList.add('bg-amber-500', 'text-gray-900');
-                    statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> 
-                        <p class="text-sm font-medium">¡${fieldName} copiado al portapapeles!</p>`;
-                } else {
-                    statusDiv.classList.add('bg-red-600', 'text-white');
-                    statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-                        <p class="text-sm font-medium">Error al copiar. Por favor, intente seleccionar el texto.</p>`;
-                }
-            } catch (err) {
-                statusDiv.classList.add('bg-red-600', 'text-white');
-                statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-                    <p class="text-sm font-medium">Error interno de copia. Por favor, hazlo manualmente.</p>`;
-            }
-            statusDiv.classList.remove('hidden');
-            
-            setTimeout(() => {
-                statusDiv.classList.add('hidden');
-            }, 5000);
-        }
-        
-        function generateSummary(e) {
-            e.preventDefault();
+    document.getElementById("outputContainer").style.display = "block";
+    document.getElementById("outputText").innerText = mensajeWhatsApp;
 
-            // 1. Obtener valores
-            const clientName = $('clientName').value.trim();
-            const serviceType = $('serviceType').value; 
-            const serviceName = serviceType;
-            const appointmentDate = $('appointmentDate').value; 
-            const appointmentStartTime = $('appointmentStartTime').value;
-            const appointmentEndTime = $('appointmentEndTime').value;
-            const abono = parseInt($('abono').value) || 0; 
-            const manualDescription = $('description').value.trim();
-            
-            let clientEmail = $('clientEmail').value.trim();
-            if (clientEmail.indexOf('@') === -1 && clientEmail.length > 0) {
-                 clientEmail = clientEmail + '@gmail.com'; // Añade el dominio si falta
-            }
-            
-            let clientPhone = $('clientPhone').value.trim(); 
+    const whatsappBtn = document.querySelector(".whatsapp-util-button");
+    whatsappBtn.onclick = () => window.open(whatsappUrl, "_blank");
 
-            // 2. Validar que la información requerida existe
-             if (!clientName || !clientEmail || !appointmentDate || !appointmentStartTime || !appointmentEndTime || !clientPhone || clientPhone.length < 10) {
-                 const errorText = (!clientPhone || clientPhone.length < 10) ? 'Faltan campos obligatorios o el número de WhatsApp es demasiado corto (debe incluir +569...)' : 'Faltan campos obligatorios por rellenar.';
-                 const statusDiv = $('statusMessage');
-                 statusDiv.classList.remove('hidden', 'bg-amber-500', 'text-gray-900', 'bg-purple-500');
-                 statusDiv.classList.add('bg-red-600', 'text-white');
-                 statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="text-sm font-medium">${errorText}</p>`;
-                 setTimeout(() => { statusDiv.classList.add('hidden'); }, 5000);
-                 return;
-             }
+    const calendarBtn = document.querySelector(".calendar-util-button");
+    calendarBtn.onclick = () => window.open(calendarUrl, "_blank");
+}
 
-            // 3. Normalizar el teléfono para wa.me (quitando el +)
-            let normalizedPhone = clientPhone.replace(/[^0-9+]/g, '');
-            if (!normalizedPhone.startsWith('+')) {
-                normalizedPhone = '+' + normalizedPhone; 
-            }
-            const phoneForWhatsapp = normalizedPhone.substring(1); 
+document.querySelector(".btn-primary").addEventListener("click", generarEvento);
+</script>
 
-            // 4. Cargar Contenido Condicional (Texto largo formateado)
-            const content = SERVICE_CONTENT[serviceType] || SERVICE_CONTENT['Piercing']; 
-            const { details: conditionalDetails } = content;
-
-            // 5. Formatear Abono
-            const abonoFormateado = abono.toLocaleString('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 });
-
-            // 6. Generación del Mensaje Completo para WhatsApp y Calendar (CON FORMATO SOLICITADO)
-            const formattedDate = formatDate(appointmentDate); // DD/MM/YYYY para display
-
-            const resumenTexto = `
-*✨ ¡Gracias por preferirnos, ${clientName}! Tu cita está confirmada: ✨*
----
-*DATOS DE LA CITA*
-👤 *Cliente:* ${clientName}
-📧 *Correo:* ${clientEmail}
-📱 *Teléfono:* ${clientPhone} 
-💉 *Servicio:* ${serviceName}
-🗓️ *Fecha:* *${formattedDate}*
-⏰ *Horario:* *${appointmentStartTime} a ${appointmentEndTime}*
-📍 *Lugar:* ${CALENDAR_LOCATION}
-💵 *Abono:* *${abonoFormateado}* (Para asegurar el cupo)
-
-${manualDescription ? `📝 *Notas de Servicio:* ${manualDescription}\n` : ''}
----
-${conditionalDetails}
-            `.trim();
-            
-            // 7. Determinar Calendar Source ID (SRC)
-            let ownerCalendarSrc;
-            let calendarTargetName;
-
-            if (serviceType === 'Tatuaje' || serviceType === 'Reserva de Retoques') {
-                ownerCalendarSrc = TATUAJE_CALENDAR_SRC;
-                calendarTargetName = 'Citas WEB Tatuajes'; 
-            } else {
-                ownerCalendarSrc = PIERCING_CALENDAR_SRC;
-                calendarTargetName = 'Citas WEB Piercing'; 
-            }
-            $('calendarTargetName').textContent = calendarTargetName; 
-
-            // 8. Preparar URL de Calendar
-            const startCalendarTime = formatCalendarTimeLocal(appointmentDate, appointmentStartTime);
-            const endCalendarTime = formatCalendarTimeLocal(appointmentDate, appointmentEndTime);
-            const remindersParam = `&reminders=[{"method":"popup","minutes":${REMINDER_MINUTES}}]`;
-            const calendarTitle = `${serviceType} | ${clientName} | Abono ${abonoFormateado}`;
-            
-            // Limpieza del texto para el parámetro 'details' (Descripción de Calendar)
-            const calendarDetailsCleaned = resumenTexto
-                .replace(/\*/g, '') 
-                .replace(/---/g, '\n-----\n') 
-                .replace(/➡️/g, '->') 
-                .replace(/[\u2700-\u27BF\uE000-\uF8FF\u2000-\u206F\u2C00-\u2C5F\uFF00-\uFFEF]/g, ''); 
-
-            // 9. Construcción final del enlace a Google Calendar
-            const calendarUrl = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(calendarTitle)}&dates=${startCalendarTime}/${endCalendarTime}&details=${encodeURIComponent(calendarDetailsCleaned)}&location=${encodeURIComponent(CALENDAR_LOCATION)}&ctz=${TIMEZONE_CTZ}&src=${encodeURIComponent(ownerCalendarSrc)}&hl=es${remindersParam}`;
-
-            // 10. Construcción del enlace de WhatsApp
-            const whatsappText = encodeURIComponent(resumenTexto);
-            const whatsappLink = `https://wa.me/${phoneForWhatsapp}?text=${whatsappText}`;
-            
-            // 11. Actualizar la interfaz de usuario
-            $('resumenTexto').textContent = resumenTexto;
-            $('debugUrlOutput').value = calendarUrl;
-            $('whatsappLink').href = whatsappLink;
-
-            $('reviewLink').href = REVIEW_URL;
-            $('cuidadosLink').href = CUIDADOS_URL;
-
-            // Mostrar el contenedor de resultados
-            $('outputContainer').classList.remove('hidden');
-
-            // 12. Copiar automáticamente el URL de Calendar
-            copyToClipboard('debugUrlOutput', 'URL de Calendar');
-        }
-    </script>
 </body>
 </html>
