@@ -115,7 +115,7 @@
                     <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Correo Cliente <span class="text-[#e11d48]">*</span></label>
                     <div class="relative">
                         <input type="email" id="clientEmail" placeholder="correo@gmail.com" class="w-full dark-input shadow-sm" required value="">
-                        </div>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Abono (CLP$)</label>
@@ -220,356 +220,98 @@
         const CUIDADOS_URL = 'https://darkone.cl/cuidados/';
         const getFormLink = (url) => url; 
 
-        // --- DEFINICIÓN DE TEXTOS LARGOS ---
+        // --- ABONOS POR DEFECTO ---
+        const DEFAULT_ABONOS = {
+            'Tratamiento Granuloma': 7500,
+            'Piercing': 15000,
+            'Piercing Menor de Edad': 15000,
+            'Tatuaje': 0, // No predefinido
+            'Reserva de Retoques': 0, // No predefinido
+        };
+
+        // --- DEFINICIÓN DE TEXTOS LARGOS (CORREGIDOS Y FORMATEADOS) ---
+        // Se ha añadido *negritas* y saltos de línea (\n\n) para mejor lectura en WhatsApp.
+        
         const PIERCING_DETAILS = `
 *INFORMACIÓN ESENCIAL – PIERCING (DARK ONE)*
 ---
 ⚠️ *LECTURA Y FORMULARIO OBLIGATORIO:*
-Rellene el Formulario exigido por el Ministerio de Salud para piercing aquí:
-➡️ ${getFormLink('https://forms.gle/z4opFbEPE3Q5h72B8')}
+Rellene el Formulario exigido por el Ministerio de Salud para piercing aquí: ➡️ ${getFormLink('https://forms.gle/z4opFbEPE3Q5h72B8')}
 
-*INSTRUCCIONES CLAVE:*
-1. **Llegada:** Se recomienda llegar 5 minutos antes. El local se encuentra a pasos del metro.
-2. **Identificación:** Debe presentar su Cédula de Identidad, sin excepción.
-3. **Restricción:** No debe consumir alcohol ni drogas 48 horas antes.
+*RESERVA, PAGO Y CONDICIONES*
+Atendemos solo *mayores de 18 años*.
+*Abono no reembolsable:* Asegura su reserva (cubre preparación de joyas, material estéril y asesoría).
+*Puntualidad:* Si llega tarde, perderá el tiempo asignado. Podría necesitar agendar con *otro abono*.
+*Cambios:* Avise con *24 horas* de anticipación.
+*Tiempo del procedimiento:* *30 minutos* (contemplar retrasos).
+*GiftCard:* Se descontarán *$15.000* del monto como adelanto.
 
-*CUIDADOS POSTERIORES:*
-🔗 Encuentre toda la información de cuidados post-piercing aquí:
-${CUIDADOS_URL}
+*PREPARACIÓN Y SALUD*
+Debe asistir *sin maquillaje, cremas, ni lesiones* en la zona. No aplique maquillaje, bloqueador o cremas en la zona a perforar.
+*Coma e hidrátese* antes. *No consuma alcohol ni aspirinas 24 horas antes*.
+*Avisar si padece o consume:* Debe notificar si tiene alergias (anestésicos), hemofilia, diabetes, hipertensión, enfermedad autoinmune, o si consume *anticoagulantes* o medicamentos para el *acné*.
 
-*Si tiene alguna duda, no dude en consultarnos.*
+*ACOMPAÑANTES Y GARANTÍA*
+Los acompañantes esperan *fuera de la sala de procedimientos*.
+*No asistir con niños;* por normativa de salud, no pueden ingresar a la sala de procedimientos.
+*Garantía y Controles:* Incluye *1 control gratuito* a los *30 días* (aprox.). Si no asiste, *perderá su garantía*.
+
+*RIESGOS Y CUIDADOS POSTERIORES*
+Todos los procedimientos tienen *riesgos* (infecciones, queloides, etc.). Estos *aumentan* si:
+- No sigue los cuidados indicados (verbalmente y por escrito).
+- Toca con manos sucias, no limpia *2 veces al día* (con NeilMed o suero fisiológico).
+- Sufre golpes, duerme sobre la joya, o se expone a ambientes inadecuados (saunas, solárium, piscinas).
+En caso de complicaciones, *dé aviso inmediato* a Dark One / Santiago Ink y *asista a un centro médico*.
+
+🔗 *CUIDADOS Y GARANTÍA DETALLADOS:* ${CUIDADOS_URL}
+Productos de la más alta calidad – DARK ONE / DARK CANDLES & SANTIAGO INK TATUAJES® Desde 2010
         `.trim();
 
         const TATUAJE_DETAILS = `
-*INFORMACIÓN ESENCIAL – TATUAJE (DARK ONE)*
+*INFORMACIÓN ESENCIAL – TATUAJES (DARK ONE)*
 ---
-*PREPARACIÓN CLAVE:*
-1. **Llegada:** Se recomienda llegar 5 minutos antes. El local se encuentra a pasos del metro.
-2. **Identificación:** Debe presentar su Cédula de Identidad, sin excepción.
-3. **Alimentación:** Venga bien alimentado e hidratado.
-4. **Restricción:** No debe consumir alcohol ni drogas 48 horas antes.
-5. **Acompañantes:** Por regulación sanitaria, no se permiten acompañantes durante el proceso de tatuado.
+⚠️ *LECTURA Y FORMULARIO OBLIGATORIO:*
+Rellene el Formulario exigido por el Ministerio de Salud para tatuajes aquí: ➡️ ${getFormLink('https://forms.gle/ksEmp5LmUzeCKvs39')}
 
-*CUIDADOS POSTERIORES:*
-🔗 Encuentre toda la información de cuidados post-tatuaje aquí:
-${CUIDADOS_URL}
+*RESERVA, PAGO Y CONDICIONES*
+Atendemos solo *mayores de edad*.
+Las citas incluyen tiempo para montaje, revisión y modificaciones parciales de diseño.
+*Abonos no reembolsables:* Son para reservar un tiempo específico de trabajo (diseño y asesoría), por lo cual *no tienen devolución*.
+*Cambios:* Avísenos hasta con *24 horas* de anticipación.
+*Puntualidad:* Si llega tarde, perderá tiempo de su sesión; podría necesitar agendar tiempo extra. *Si no asiste, pierde el abono de la reserva*.
+*Procedimientos extras:* Necesitan ser agendados, *abonados* e implican cobros adicionales (materiales, tiempo).
+*Reservas con GiftCard:* Se consideran *$25.000* del monto como *abono* de reserva. Aplican todos los puntos de este informativo.
 
-*Si tiene alguna duda, no dude en consultarnos.*
+*PREPARACIÓN Y SALUD*
+*Preparación:* Use ropa cómoda. Se recomienda llegar con la *zona depilada* para evitar irritaciones.
+*Consumo:* *Coma e hidrátese* al menos *2 horas* antes. *NO consuma alcohol ni aspirinas 24 horas antes*.
+*Avisar si padece de:* alergias, hemofilia, dermatosis, diabetes, epilepsia, hipertensión o ansiedad.
+*Avisar si consume medicamentos* *anticoagulantes* o para *acné*.
+
+*CONSEJOS*
+Evite acompañantes.
+Para el cuidado de su tatuaje *NO recomendamos bephantol*.
+
+*RIESGOS Y CUIDADOS POSTERIORES*
+*Riesgos:* Todos los procedimientos presentan *riesgos* (lesiones dérmicas, infecciones, pérdida de color y alergias).
+Estos riesgos *aumentan* si:
+- No sigue nuestros cuidados (se informarán verbalmente y por escrito en www.darkone.cl).
+- Realiza deporte, toca con manos sucias, sufre falta de hidratación, o se expone a ambientes inadecuados (saunas, solárium, piscinas, etc.).
+*Complicaciones:* Debe dar aviso al estudio Dark One / Santiago Ink (Contacto +56932237670) y *asistir a un centro médico o profesional de salud*.
+
+Productos de primera calidad. Veganos y Cruelty Free. DARK ONE es marca registrada de SANTIAGO INK TATUAJES & DARK CANDLES ®. Desde 2010.
         `.trim();
         
         const GRANULOMA_DETAILS = `
-*INFORMACIÓN ESENCIAL – TRATAMIENTO GRANULOMA*
+*INFORMACIÓN ESENCIAL – TRATAMIENTO DE GRANULOMAS (DARK ONE)*
 ---
-*PREPARACIÓN CLAVE:*
-1. **Llegada:** Se ruega puntualidad. La sesión requiere tiempo específico de preparación.
-2. **Identificación:** Debe presentar su Cédula de Identidad.
-3. **Pieza:** No debe manipular la joya ni el área antes de la sesión.
-4. **Instrucciones:** En la sesión se le indicará el proceso exacto de tratamiento y seguimiento.
+⚠️ *LECTURA Y FORMULARIO OBLIGATORIO:*
+Complete el Formulario exigido por el Ministerio de Salud aquí: ➡️ ${getFormLink('https://forms.gle/ksEmp5LmUzeCKvs39')} *(Nota: Use el link del formulario de tatuajes si el de granulomas no está disponible aún)*
 
-*Si tiene alguna duda, no dude en consultarnos.*
-        `.trim();
-
-        const MENOR_EDAD_DETAILS = `
-*INFORMACIÓN ESENCIAL – PIERCING MENOR DE EDAD*
----
-⚠️ *DOCUMENTACIÓN OBLIGATORIA:*
-Debe venir acompañado por un adulto (padre, madre o tutor legal) que presente su Cédula de Identidad.
-
-1. **Autorización:** Descargue y rellene la *Ficha de Autorización Legal* exigida:
-➡️ ${getFormLink('https://forms.gle/z4opFbEPE3Q5h72B8')}
-2. **Identificación:** Debe presentar Cédula de Identidad tanto el menor como el adulto responsable.
-3. **Restricción:** No debe consumir alcohol ni drogas 48 horas antes.
-
-*CUIDADOS POSTERIORES:*
-🔗 Encuentre toda la información de cuidados post-piercing aquí:
-${CUIDADOS_URL}
-        `.trim();
-
-        const RETOQUES_DETAILS = `
-*INFORMACIÓN ESENCIAL – RESERVA DE RETOQUES*
----
-*PREPARACIÓN CLAVE:*
-1. **Puntualidad:** Se ruega puntualidad. Los retoques tienen un tiempo acotado.
-2. **Piel:** La piel del área a retocar debe estar **totalmente cicatrizada y sana**.
-3. **Identificación:** Debe presentar su Cédula de Identidad.
-
-*Si tiene alguna duda sobre el estado de su tatuaje, envíenos una fotografía antes de la cita.*
-        `.trim();
-
-
-        const SERVICE_CONTENT = {
-            'Tatuaje': { details: TATUAJE_DETAILS },
-            'Piercing': { details: PIERCING_DETAILS },
-            'Tratamiento Granuloma': { details: GRANULOMA_DETAILS },
-            'Piercing Menor de Edad': { details: MENOR_EDAD_DETAILS },
-            'Reserva de Retoques': { details: RETOQUES_DETAILS },
-        };
-
-        // --- UTILIDADES ---
-        const formatDate = (dateStr) => {
-            const [year, month, day] = dateStr.split('-');
-            const date = new Date(year, month - 1, day);
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            return date.toLocaleDateString('es-ES', options);
-        };
-        const getTodayDate = () => {
-            return new Date().toISOString().slice(0, 10);
-        };
-        // Calcula 30 minutos después de la hora de inicio (lógica intacta)
-        const calculateDefaultEndTime = (startTime) => {
-            if (!startTime) return '';
-            const [hours, minutes] = startTime.split(':').map(Number);
-            const endTime = new Date(1970, 0, 1, hours, minutes + 30);
-            const endHours = String(endTime.getHours()).padStart(2, '0');
-            const endMinutes = String(endTime.getMinutes()).padStart(2, '0');
-            return `${endHours}:${endMinutes}`;
-        };
-        const formatCalendarTimeLocal = (date, time) => {
-            const [year, month, day] = date.split('-');
-            const [hour, minute] = time.split(':');
-            const dt = new Date(year, month - 1, day, hour, minute);
-            
-            const toTz = (dateObj) => {
-                const pad = (n) => (n < 10 ? '0' : '') + n;
-                const year = dateObj.getFullYear();
-                const month = pad(dateObj.getMonth() + 1);
-                const day = pad(dateObj.getDate());
-                const hour = pad(dateObj.getHours());
-                const minute = pad(dateObj.getMinutes());
-                const second = pad(dateObj.getSeconds());
-                return `${year}${month}${day}T${hour}${minute}${second}`;
-            };
-            return toTz(dt);
-        };
-        
-        function copyToClipboard(elementId, fieldName) {
-            const element = getElement(elementId);
-            const textToCopy = element.value || element.textContent; 
-            const statusDiv = getElement('statusMessage');
-            
-            try {
-                const tempTextArea = document.createElement('textarea');
-                tempTextArea.value = textToCopy;
-                tempTextArea.style.position = 'absolute';
-                tempTextArea.style.left = '-9999px';
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                const success = document.execCommand('copy');
-                document.body.removeChild(tempTextArea);
-
-                if (success) {
-                    statusDiv.classList.remove('bg-red-600', 'text-white', 'bg-amber-500', 'text-gray-900', 'hidden');
-                    statusDiv.classList.add('bg-[#e11d48]', 'text-white');
-                    statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> 
-                        <p class="text-sm font-medium">¡${fieldName} copiado al portapapeles!</p>`;
-                } else {
-                    statusDiv.classList.remove('hidden', 'bg-[#e11d48]', 'text-white');
-                    statusDiv.classList.add('bg-amber-500', 'text-gray-900');
-                    statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="text-sm font-medium">Error al copiar ${fieldName}. Copie manualmente desde el recuadro.</p>`;
-                }
-            } catch (err) {
-                 statusDiv.classList.remove('hidden', 'bg-[#e11d48]', 'text-white');
-                 statusDiv.classList.add('bg-red-600', 'text-white');
-                 statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="text-sm font-medium">Error de navegador. Copie el texto manualmente.</p>`;
-            }
-            statusDiv.classList.remove('hidden');
-            setTimeout(() => {
-                statusDiv.classList.add('hidden');
-            }, 5000);
-        }
-
-        // --- FUNCIÓN DE PROCESAMIENTO DE PEGADO RÁPIDO ---
-        function processPastedData() {
-            const pastedText = getElement('pasteInput').value;
-            if (!pastedText) {
-                alert('Por favor, pegue el texto de la plantilla primero.');
-                return;
-            }
-
-            const extractValue = (label) => {
-                const regex = new RegExp(`(${label}|${label.normalize("NFD").replace(/[\u0300-\u036f]/g, "")})\\s*:\\s*(.*?)(?=\\n|$)`, 'i');
-                const match = pastedText.match(regex);
-                return match && match[2] ? match[2].trim() : '';
-            };
-
-            // 1. Extraer los datos
-            let name = extractValue('Nombre');
-            let phone = extractValue('Número WhatsApp'); 
-            let email = extractValue('Correo electrónico');
-
-            // 2. Normalizar el Teléfono
-            if (phone) {
-                phone = phone.replace(/[^0-9+]/g, ''); 
-                if (!phone.startsWith('+')) {
-                    phone = '+' + phone; 
-                }
-            }
-
-            // 3. Rellenar los campos del formulario
-            if (name) getElement('clientName').value = name;
-            if (phone) getElement('clientPhone').value = phone;
-            // Se elimina la parte del correo para que el campo quede limpio
-            if (email) getElement('clientEmail').value = email.replace(/@(gmail|hotmail|outlook)\.com/gi, ''); 
-
-            // 4. Feedback visual
-            alert('¡Datos de Nombre, Número WhatsApp y Correo electrónico rellenados exitosamente!');
-            getElement('pasteInput').value = ''; 
-            getElement('clientName').focus(); 
-        }
-        
-        // --- FUNCIÓN PRINCIPAL DE RESUMEN ---
-        function generateSummary(e) {
-            e.preventDefault();
-
-            // 1. Obtener valores
-            const clientName = getElement('clientName').value.trim();
-            const serviceType = getElement('serviceType').value; 
-            const serviceName = serviceType;
-            const appointmentDate = getElement('appointmentDate').value; 
-            const appointmentStartTime = getElement('appointmentStartTime').value;
-            const appointmentEndTime = getElement('appointmentEndTime').value;
-            const abono = parseInt(getElement('abono').value) || 0; 
-            const manualDescription = getElement('description').value.trim();
-            
-            let clientEmail = getElement('clientEmail').value.trim();
-            // Lógica para autocompletar @gmail.com si no hay un '@' (MANTENIDO)
-            if (clientEmail.indexOf('@') === -1 && clientEmail.length > 0) {
-                 clientEmail = clientEmail + '@gmail.com'; 
-            }
-            
-            let clientPhone = getElement('clientPhone').value.trim(); 
-
-            // 2. Validaciones
-             if (!clientName || !clientEmail || !appointmentDate || !appointmentStartTime || !appointmentEndTime || !clientPhone || clientPhone.length < 10) {
-                 const errorText = (!clientPhone || clientPhone.length < 10) ? 'Faltan campos obligatorios o el número de WhatsApp es demasiado corto (debe incluir +569...)' : 'Faltan campos obligatorios por rellenar.';
-                 const statusDiv = getElement('statusMessage');
-                 statusDiv.classList.remove('hidden', 'bg-amber-500', 'text-gray-900', 'bg-[#e11d48]', 'text-white');
-                 statusDiv.classList.add('bg-red-600', 'text-white');
-                 statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="text-sm font-medium">${errorText}</p>`;
-                 setTimeout(() => { statusDiv.classList.add('hidden'); }, 5000);
-                 return;
-             }
-
-            // 3. Normalizar
-            let normalizedPhone = clientPhone.replace(/[^0-9+]/g, '');
-            if (!normalizedPhone.startsWith('+')) {
-                normalizedPhone = '+' + normalizedPhone; 
-            }
-            const phoneForWhatsapp = normalizedPhone.substring(1); 
-
-            // 4. Cargar Contenido Condicional
-            const content = SERVICE_CONTENT[serviceType] || SERVICE_CONTENT['Piercing']; 
-            const { details: conditionalDetails } = content;
-
-            // 5. Formatear Abono y Fecha
-            const abonoFormateado = abono.toLocaleString('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 });
-            const formattedDate = formatDate(appointmentDate);
-
-            // 6. Bloque de DATOS DE LA CITA (Omite Abono si es 0)
-            const abonoLine = (abono > 0) 
-                ? `💵 *Abono:* *${abonoFormateado}* (Para asegurar el cupo)` 
-                : '';
-                
-            const datosCitaBloque = `
-*DATOS DE LA CITA*
-👤 *Cliente:* ${clientName}
-📧 *Correo:* ${clientEmail}
-📱 *Teléfono:* ${clientPhone} 
-💉 *Servicio:* ${serviceName}
-🗓️ *Fecha:* *${formattedDate}*
-⏰ *Horario:* *${appointmentStartTime} a ${appointmentEndTime}*
-📍 *Lugar:* ${CALENDAR_LOCATION}
-${abonoLine}
-
-${manualDescription ? `📝 *Notas de Servicio:* ${manualDescription}\n` : ''}`.trim();
-
-            const condicionesBloque = conditionalDetails;
-            
-            // 7. Generación del Mensaje de WhatsApp
-            const whatsappText = `
-*✨ ¡Gracias por preferirnos, ${clientName}! Tu cita está confirmada: ✨*
----
-${datosCitaBloque}
----
-${condicionesBloque}
-            `.trim();
-
-            // 8. Generación del Mensaje de Calendar
-            const calendarDescriptionText = `
-*✨ ¡Gracias por preferirnos, ${clientName}! Tu cita está confirmada: ✨*
----
-${condicionesBloque}
----
-${datosCitaBloque}
-            `.trim();
-
-            // 9. Determinar Calendar Source ID (SRC)
-            let ownerCalendarSrc;
-            let calendarTargetName;
-
-            if (serviceType === 'Tatuaje' || serviceType === 'Reserva de Retoques') {
-                ownerCalendarSrc = TATUAJE_CALENDAR_SRC;
-                calendarTargetName = 'Citas WEB Tatuajes'; 
-            } else {
-                ownerCalendarSrc = PIERCING_CALENDAR_SRC;
-                calendarTargetName = 'Citas WEB Piercing'; 
-            }
-            getElement('calendarTargetName').textContent = calendarTargetName; 
-
-            // 10. Preparar URL de Calendar
-            const startCalendarTime = formatCalendarTimeLocal(appointmentDate, appointmentStartTime);
-            const endCalendarTime = formatCalendarTimeLocal(appointmentDate, appointmentEndTime);
-            const remindersParam = `&reminders=[{"method":"popup","minutes":${REMINDER_MINUTES}}]`;
-            const calendarTitle = `${serviceType} | ${clientName}${manualDescription ? ` (${manualDescription})` : ''} | Abono ${abonoFormateado}`;
-            const calendarDetailsCleaned = calendarDescriptionText 
-                .replace(/\*/g, '') 
-                .replace(/---/g, '\n-----\n') 
-                .replace(/➡️/g, '->') 
-                .replace(/[\u2700-\u27BF\uE000-\uF8FF\u2000-\u206F\u2C00-\u2C5F\uFF00-\uFFEF]/g, ''); 
-
-            // 11. Construcción final del enlace a Google Calendar
-            const calendarUrl = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(calendarTitle)}&dates=${startCalendarTime}/${endCalendarTime}&details=${encodeURIComponent(calendarDetailsCleaned)}&location=${encodeURIComponent(CALENDAR_LOCATION)}&ctz=${TIMEZONE_CTZ}&src=${encodeURIComponent(ownerCalendarSrc)}&hl=es${remindersParam}&add=${encodeURIComponent(clientEmail)}`;
-
-            // 12. Construcción del enlace de WhatsApp
-            const whatsappEncodedText = encodeURIComponent(whatsappText); 
-            const whatsappUrl = `https://wa.me/${phoneForWhatsapp}?text=${whatsappEncodedText}`;
-            
-            // 13. Mostrar resultados
-            getElement('resumenTexto').textContent = whatsappText;
-            getElement('whatsappLink').href = whatsappUrl;
-            getElement('calendarLink').href = calendarUrl; 
-            getElement('debugUrlOutput').value = calendarUrl; 
-            
-            getElement('outputContainer').classList.remove('hidden');
-            
-            // 14. Auto-copiar Mensaje de WhatsApp
-            copyToClipboard('resumenTexto', 'Mensaje de WhatsApp');
-
-            // Desplazarse a los resultados
-            getElement('outputContainer').scrollIntoView({ behavior: 'smooth' });
-        }
-
-
-        // --- INICIALIZACIÓN DE LA APP ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const initialDate = getTodayDate();
-            // CAMBIO 2: Nuevo horario por defecto
-            const initialStartTime = '15:30'; 
-            const initialEndTime = calculateDefaultEndTime(initialStartTime);
-
-            getElement('appointmentDate').value = initialDate;
-            getElement('appointmentStartTime').value = initialStartTime;
-            getElement('appointmentEndTime').value = initialEndTime;
-
-            // Event Listeners (Asegura el cambio automático de 30 min)
-            getElement('appointmentStartTime').addEventListener('input', (e) => {
-                getElement('appointmentEndTime').value = calculateDefaultEndTime(e.target.value);
-            });
-            getElement('appointmentForm').addEventListener('submit', generateSummary);
-
-            // Enlazar el botón de procesamiento de pegado
-            getElement('processPasteButton').addEventListener('click', processPastedData);
-        });
-    </script>
-</body>
-</html>
+*RESERVA, PAGO Y TRATAMIENTO*
+Atendemos solo *mayores de 18 años*.
+Las citas incluyen tiempo para evaluación, preparación y procedimiento.
+*Abono no reembolsable:* El *abono* asegura su reserva, cubre la evaluación, asesoría y material estéril. *No tiene devolución*.
+*Cambios:* Avise con *24 horas* de anticipación.
+*Puntualidad:* Si llega tarde, perderá el tiempo asignado. Podría requerir agendar una nueva cita con *otro abono*.
+*Frecuencia y Pago:* Las
