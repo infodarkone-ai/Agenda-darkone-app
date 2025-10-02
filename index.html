@@ -119,7 +119,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Abono (CLP$)</label>
-                    <input type="number" id="abono" placeholder="Ej: 50000" class="w-full dark-input shadow-sm" value="">
+                    <input type="number" id="abono" placeholder="Ej: 50000" class="w-full dark-input shadow-sm" value="0">
                 </div>
             </div>
 
@@ -136,7 +136,7 @@
                     <input type="date" id="appointmentDate" class="w-full dark-input dark-input shadow-sm" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Inicio (15:30 por defecto) <span class="text-[#e11d48]">*</span></label>
+                    <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Inicio (13:30 por defecto) <span class="text-[#e11d48]">*</span></label>
                     <input type="time" id="appointmentStartTime" class="w-full dark-input dark-input shadow-sm" required>
                 </div>
                 <div>
@@ -162,7 +162,7 @@
             <div class="space-y-6">
                 <div class="bg-[#1e1e1e] p-4 rounded-lg border border-[#e11d48]/50">
                     <p class="text-lg font-semibold text-[#e11d48] mb-3 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-[#e11d48]"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-[#e11d48]"><circle cx="12" cy="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                         Paso 1: Crear Evento en Google Calendar
                     </p>
                     <p class="text-sm text-[#e5e5e5] mb-4">La descripción incluye todos los detalles del servicio. (Target: <b><span id="calendarTargetName"></span></b>)</p>
@@ -216,7 +216,6 @@
         const PIERCING_CALENDAR_SRC = 'Citas WEBPiercing'; 
         const TIMEZONE_CTZ = 'America/Santiago'; 
         const REMINDER_MINUTES = 180;
-        const REVIEW_URL = 'https://g.page/r/Cag5XmHF8-QOEAE/review';
         const CUIDADOS_URL = 'https://darkone.cl/cuidados/';
         const getFormLink = (url) => url; 
 
@@ -225,13 +224,11 @@
             'Tratamiento Granuloma': 7500,
             'Piercing': 15000,
             'Piercing Menor de Edad': 15000,
-            'Tatuaje': 0, // No predefinido
-            'Reserva de Retoques': 0, // No predefinido
+            'Tatuaje': 0, 
+            'Reserva de Retoques': 0,
         };
 
-        // --- DEFINICIÓN DE TEXTOS LARGOS (CORREGIDOS Y FORMATEADOS) ---
-        // Se ha añadido *negritas* y saltos de línea (\n\n) para mejor lectura en WhatsApp.
-        
+        // --- DEFINICIÓN DE TEXTOS LARGOS ---
         const PIERCING_DETAILS = `
 *INFORMACIÓN ESENCIAL – PIERCING (DARK ONE)*
 ---
@@ -314,4 +311,378 @@ Las citas incluyen tiempo para evaluación, preparación y procedimiento.
 *Abono no reembolsable:* El *abono* asegura su reserva, cubre la evaluación, asesoría y material estéril. *No tiene devolución*.
 *Cambios:* Avise con *24 horas* de anticipación.
 *Puntualidad:* Si llega tarde, perderá el tiempo asignado. Podría requerir agendar una nueva cita con *otro abono*.
-*Frecuencia y Pago:* Las
+*Frecuencia y Pago:* Las sesiones se realizan *cada una semana aproximadamente*. Cada sesión se abona por adelantado.
+*Duración:* Cada sesión puede durar entre *20 a 40 minutos*.
+*Nota importante:* Este es un tratamiento que puede necesitar *1 o más sesiones*. El número de sesiones dependerá del *tamaño*, *tiempo* del granuloma y del *organismo de cada persona*, por lo que *no podemos asegurar la cantidad total de tratamientos* que pueda necesitar.
+
+*PREPARACIÓN Y SALUD*
+Debe asistir *sin cremas ni maquillaje* en la zona a tratar.
+*Consumo:* *Coma e hidrátese* antes. *No consuma aspirinas 24 horas antes*. Antes de cada tratamiento, es importante no beber alcohol, en especial destilados, 24 horas antes.
+*Avisa si padeces de:* alergias a anestésicos, hemofilia, dermatosis, diabetes, epilepsia, hipertensión, ansiedad o enfermedad autoinmune.
+*Avisa si consume medicamentos* *anticoagulantes* o para *acné*.
+
+*CONSEJOS Y CUIDADOS POSTERIORES*
+Evite acompañantes en la sala de procedimiento.
+Todos los procedimientos presentan *riesgos* de reacciones dérmicas o infecciones si *no sigue nuestros cuidados*.
+*Cuidados:* Se le informará de los cuidados posteriores verbalmente y los puede encontrar por escrito en nuestra página web. www.darkone.cl
+En caso de complicaciones o reacciones adversas, debe dar *aviso inmediato* a Dark One / Santiago Ink y *asistir a un centro médico o profesional de salud*.
+
+Productos de la más alta calidad – DARK ONE / DARK CANDLES & SANTIAGO INK TATUAJES® Desde 2010.
+        `.trim();
+
+        const MENOR_EDAD_DETAILS = `
+*INFORMACIÓN ESENCIAL – PIERCING MENOR DE EDAD*
+---
+⚠️ *LECTURA Y DOBLE FORMULARIO OBLIGATORIO:*
+Complete *los dos formularios* con los datos del menor, exigidos por el Ministerio de Salud: 
+➡️ ${getFormLink('https://forms.gle/AtkD8w2YeDfUWhyW6')} 
+➡️ ${getFormLink('https://forms.gle/z4opFbEPE3Q5h72B8')}
+
+*RESERVA, PAGO Y CONDICIONES*
+Las citas incluyen tiempo para preparación, revisión de proyectos y selección de joyas.
+*Abono no reembolsable:* Asegura su reserva (cubre preparación de joyas y asesoría).
+*Puntualidad:* Si llegas tarde, perderás el tiempo asignado. Podría necesitar agendar con *otro abono*.
+*Cambios:* Avise con *24 horas* de anticipación.
+*Tiempo del procedimiento:* *30 minutos* (contemplar retrasos o complicaciones).
+*GiftCard:* Se descontarán *$15.000* del monto como adelanto.
+
+*PREPARACIÓN Y SALUD*
+*Informar:* Avise si tiene *alergias, hemofilia, diabetes o síntomas respiratorios* antes de la cita.
+*Consumo:* *Come e hidrátate* antes del procedimiento. *No consumas alcohol ni aspirinas 24 horas antes*.
+*Zona a perforar:* *No apliques* maquillaje, bloqueador o cremas en la zona.
+
+*TUTOR, ACOMPAÑANTES Y GARANTÍA*
+*Acompañante:* El *tutor es el único* que debe acompañar al menor *en todo el proceso* y *revisar que el material esté en buenas condiciones*.
+Los demás acompañantes esperan *fuera de la sala de procedimientos*.
+*No asistir con otros menores;* por normativa de salud, no pueden ingresar a la sala de procedimientos.
+*Controles gratuitos y Garantía:* Incluye *1 control* al *mes* de lunes a viernes. Si no asistes, *perderás tu garantía*.
+*Procedimientos adicionales:* Deben agendarse y abonarse por separado o avisar con anticipación.
+
+*CUIDADOS POSTERIORES*
+Revisa los *CUIDADOS y condiciones de GARANTÍA* de piercing en 👇🏻 ${CUIDADOS_URL}
+Productos de la más alta calidad – DARK ONE / DARK CANDLES & SANTIAGO INK TATUAJES® Desde 2010
+        `.trim();
+
+        const RETOQUES_DETAILS = `
+*INFORMACIÓN ESENCIAL – RESERVA DE RETOQUES (DARK ONE)*
+---
+*RESERVA Y CONDICIONES DE GARANTÍA*
+Las citas están destinadas a retoques e incluyen tiempo para montaje.
+*Cambios:* Debe avisar hasta con *48 horas* de anticipación. De lo contrario, *perderá la posibilidad de reagendar sin costo*.
+*Puntualidad:* Si llega tarde, perderá tiempo. Podría necesitar reagendar, lo cual tiene un *costo adicional*.
+*Si no asiste a su cita, pierde la garantía y la posibilidad de reagendar sin costo*.
+*Procedimientos extras:* Cualquier procedimiento adicional al retoque implica *cobros extras* (materiales, tiempo).
+
+*VALORES ADICIONALES (Reagendar y Extras)*
+Si desea agregar algo a su tatuaje, avise con anticipación para que sea considerado en el tiempo de su cita.
+*Reagendar y Extra para negro* tiene un costo mínimo adicional de *$15.000* que se deposita por adelantado.
+*Reagendar y Extra para color* tiene un costo mínimo adicional de *$25.000* que se deposita por adelantado.
+Si no asiste a su cita, pierde el adicional depositado.
+
+*PREPARACIÓN Y CONSEJOS*
+Sea puntual.
+Evite acompañantes.
+*Preparación:* Se recomienda llegar con la *zona depilada* para evitar irritaciones.
+*Consumo:* *Coma e hidrátese* al menos *2 horas* antes. *Evite el consumo de destilados y aspirina 24 horas antes*.
+*Ropa:* Asegúrese de usar *ropa cómoda* para el procedimiento.
+*Cuidados:* Para el cuidado de su tatuaje *NO recomendamos bephantol*.
+
+*GARANTÍA Y CALIDAD*
+Revise los *CUIDADOS y condiciones de GARANTÍA* de nuestros tatuajes en ${CUIDADOS_URL}.
+*Productos:* TODOS nuestros productos son de *primera calidad, veganos y cruelty free*.
+DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES & DARK CANDLES ®. Desde 2010.
+        `.trim();
+
+
+        const SERVICE_CONTENT = {
+            'Tatuaje': { details: TATUAJE_DETAILS },
+            'Piercing': { details: PIERCING_DETAILS },
+            'Tratamiento Granuloma': { details: GRANULOMA_DETAILS },
+            'Piercing Menor de Edad': { details: MENOR_EDAD_DETAILS },
+            'Reserva de Retoques': { details: RETOQUES_DETAILS },
+        };
+
+        // --- UTILIDADES ---
+        const formatDate = (dateStr) => {
+            const [year, month, day] = dateStr.split('-');
+            const date = new Date(year, month - 1, day);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('es-ES', options);
+        };
+        const getTodayDate = () => {
+            return new Date().toISOString().slice(0, 10);
+        };
+        // Ya no se usa para la hora final por defecto, pero se mantiene por si se necesita
+        const calculateDefaultEndTime = (startTime) => {
+            if (!startTime) return '';
+            const [hours, minutes] = startTime.split(':').map(Number);
+            const endTime = new Date(1970, 0, 1, hours, minutes + 30);
+            const endHours = String(endTime.getHours()).padStart(2, '0');
+            const endMinutes = String(endTime.getMinutes()).padStart(2, '0');
+            return `${endHours}:${endMinutes}`;
+        };
+        const formatCalendarTimeLocal = (date, time) => {
+            const [year, month, day] = date.split('-');
+            const [hour, minute] = time.split(':');
+            const dt = new Date(year, month - 1, day, hour, minute);
+            
+            const toTz = (dateObj) => {
+                const pad = (n) => (n < 10 ? '0' : '') + n;
+                const year = dateObj.getFullYear();
+                const month = pad(dateObj.getMonth() + 1);
+                const day = pad(dateObj.getDate());
+                const hour = pad(dateObj.getHours());
+                const minute = pad(dateObj.getMinutes());
+                const second = pad(dateObj.getSeconds());
+                return `${year}${month}${day}T${hour}${minute}${second}`;
+            };
+            return toTz(dt);
+        };
+        
+        function copyToClipboard(elementId, fieldName) {
+            const element = getElement(elementId);
+            const textToCopy = element.value || element.textContent; 
+            const statusDiv = getElement('statusMessage');
+            
+            try {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = textToCopy;
+                tempTextArea.style.position = 'absolute';
+                tempTextArea.style.left = '-9999px';
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                const success = document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+
+                if (success) {
+                    statusDiv.classList.remove('bg-red-600', 'text-white', 'bg-amber-500', 'text-gray-900', 'hidden');
+                    statusDiv.classList.add('bg-[#e11d48]', 'text-white');
+                    statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> 
+                        <p class="text-sm font-medium">¡${fieldName} copiado al portapapeles!</p>`;
+                } else {
+                    statusDiv.classList.remove('hidden', 'bg-[#e11d48]', 'text-white');
+                    statusDiv.classList.add('bg-amber-500', 'text-gray-900');
+                    statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="text-sm font-medium">Error al copiar ${fieldName}. Copie manualmente desde el recuadro.</p>`;
+                }
+            } catch (err) {
+                 statusDiv.classList.remove('hidden', 'bg-[#e11d48]', 'text-white');
+                 statusDiv.classList.add('bg-red-600', 'text-white');
+                 statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="text-sm font-medium">Error de navegador. Copie el texto manualmente.</p>`;
+            }
+            statusDiv.classList.remove('hidden');
+            setTimeout(() => {
+                statusDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        // --- FUNCIÓN DE PROCESAMIENTO DE PEGADO RÁPIDO ---
+        function processPastedData() {
+            const pastedText = getElement('pasteInput').value;
+            if (!pastedText) {
+                alert('Por favor, pegue el texto de la plantilla primero.');
+                return;
+            }
+
+            const extractValue = (label) => {
+                const regex = new RegExp(`(${label}|${label.normalize("NFD").replace(/[\u0300-\u036f]/g, "")})\\s*:\\s*(.*?)(?=\\n|$)`, 'i');
+                const match = pastedText.match(regex);
+                return match && match[2] ? match[2].trim() : '';
+            };
+
+            // 1. Extraer los datos
+            let name = extractValue('Nombre');
+            let phone = extractValue('Número WhatsApp'); 
+            let email = extractValue('Correo electrónico');
+
+            // 2. Normalizar el Teléfono
+            if (phone) {
+                phone = phone.replace(/[^0-9+]/g, ''); 
+                if (!phone.startsWith('+')) {
+                    phone = '+' + phone; 
+                }
+            }
+
+            // 3. Rellenar los campos del formulario
+            if (name) getElement('clientName').value = name;
+            if (phone) getElement('clientPhone').value = phone;
+            if (email) getElement('clientEmail').value = email.replace(/@(gmail|hotmail|outlook)\.com/gi, ''); 
+
+            // 4. Feedback visual
+            alert('¡Datos de Nombre, Número WhatsApp y Correo electrónico rellenados exitosamente!');
+            getElement('pasteInput').value = ''; 
+            getElement('clientName').focus(); 
+        }
+        
+        // --- FUNCIÓN PRINCIPAL DE RESUMEN ---
+        function generateSummary(e) {
+            e.preventDefault(); // <-- **ESTA LÍNEA ES CRUCIAL** para evitar el reinicio.
+
+            // 1. Obtener valores
+            const clientName = getElement('clientName').value.trim();
+            const serviceType = getElement('serviceType').value; 
+            const serviceName = serviceType;
+            const appointmentDate = getElement('appointmentDate').value; 
+            const appointmentStartTime = getElement('appointmentStartTime').value;
+            const appointmentEndTime = getElement('appointmentEndTime').value;
+            const abono = parseInt(getElement('abono').value) || 0; 
+            const manualDescription = getElement('description').value.trim();
+            
+            let clientEmail = getElement('clientEmail').value.trim();
+            if (clientEmail.indexOf('@') === -1 && clientEmail.length > 0) {
+                 clientEmail = clientEmail + '@gmail.com'; 
+            }
+            
+            let clientPhone = getElement('clientPhone').value.trim(); 
+
+            // 2. Validaciones
+             if (!clientName || !clientEmail || !appointmentDate || !appointmentStartTime || !appointmentEndTime || !clientPhone || clientPhone.length < 10) {
+                 const errorText = (!clientPhone || clientPhone.length < 10) ? 'Faltan campos obligatorios o el número de WhatsApp es demasiado corto (debe incluir +569...)' : 'Faltan campos obligatorios por rellenar.';
+                 const statusDiv = getElement('statusMessage');
+                 statusDiv.classList.remove('hidden', 'bg-amber-500', 'text-gray-900', 'bg-[#e11d48]', 'text-white');
+                 statusDiv.classList.add('bg-red-600', 'text-white');
+                 statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="text-sm font-medium">${errorText}</p>`;
+                 setTimeout(() => { statusDiv.classList.add('hidden'); }, 5000);
+                 return;
+             }
+
+            // 3. Normalizar
+            let normalizedPhone = clientPhone.replace(/[^0-9+]/g, '');
+            if (!normalizedPhone.startsWith('+')) {
+                normalizedPhone = '+' + normalizedPhone; 
+            }
+            const phoneForWhatsapp = normalizedPhone.substring(1); 
+
+            // 4. Cargar Contenido Condicional
+            const content = SERVICE_CONTENT[serviceType] || SERVICE_CONTENT['Piercing']; 
+            const { details: conditionalDetails } = content;
+
+            // 5. Formatear Abono y Fecha
+            const abonoFormateado = abono.toLocaleString('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 });
+            const formattedDate = formatDate(appointmentDate);
+
+            // 6. Bloque de DATOS DE LA CITA (Omite Abono si es 0)
+            const abonoLine = (abono > 0) 
+                ? `💵 *Abono:* *${abonoFormateado}* (Para asegurar el cupo)` 
+                : '';
+                
+            const datosCitaBloque = `
+*DATOS DE LA CITA*
+👤 *Cliente:* ${clientName}
+📧 *Correo:* ${clientEmail}
+📱 *Teléfono:* ${clientPhone} 
+💉 *Servicio:* ${serviceName}
+🗓️ *Fecha:* *${formattedDate}*
+⏰ *Horario:* *${appointmentStartTime} a ${appointmentEndTime}*
+📍 *Lugar:* ${CALENDAR_LOCATION}
+${abonoLine}
+
+${manualDescription ? `📝 *Notas de Servicio:* ${manualDescription}\n` : ''}`.trim();
+
+            const condicionesBloque = conditionalDetails;
+            
+            // 7. Generación del Mensaje de WhatsApp
+            const whatsappText = `
+*✨ ¡Gracias por preferirnos, ${clientName}! Tu cita está confirmada: ✨*
+---
+${datosCitaBloque}
+---
+${condicionesBloque}
+            `.trim();
+
+            // 8. Generación del Mensaje de Calendar
+            const calendarDescriptionText = `
+*✨ ¡Gracias por preferirnos, ${clientName}! Tu cita está confirmada: ✨*
+---
+${condicionesBloque}
+---
+${datosCitaBloque}
+            `.trim();
+
+            // 9. Determinar Calendar Source ID (SRC)
+            let ownerCalendarSrc;
+            let calendarTargetName;
+
+            if (serviceType === 'Tatuaje' || serviceType === 'Reserva de Retoques') {
+                ownerCalendarSrc = TATUAJE_CALENDAR_SRC;
+                calendarTargetName = 'Citas WEB Tatuajes'; 
+            } else {
+                ownerCalendarSrc = PIERCING_CALENDAR_SRC;
+                calendarTargetName = 'Citas WEB Piercing'; 
+            }
+            getElement('calendarTargetName').textContent = calendarTargetName; 
+
+            // 10. Preparar URL de Calendar
+            const startCalendarTime = formatCalendarTimeLocal(appointmentDate, appointmentStartTime);
+            const endCalendarTime = formatCalendarTimeLocal(appointmentDate, appointmentEndTime);
+            const remindersParam = `&reminders=[{"method":"popup","minutes":${REMINDER_MINUTES}}]`;
+            const calendarTitle = `${serviceType} | ${clientName}${manualDescription ? ` (${manualDescription})` : ''} | Abono ${abonoFormateado}`;
+            const calendarDetailsCleaned = calendarDescriptionText 
+                .replace(/\*/g, '') 
+                .replace(/---/g, '\n-----\n') 
+                .replace(/➡️/g, '->') 
+                .replace(/[\u2700-\u27BF\uE000-\uF8FF\u2000-\u206F\u2C00-\u2C5F\uFF00-\uFFEF]/g, ''); 
+
+            // 11. Construcción final del enlace a Google Calendar
+            const calendarUrl = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(calendarTitle)}&dates=${startCalendarTime}/${endCalendarTime}&details=${encodeURIComponent(calendarDetailsCleaned)}&location=${encodeURIComponent(CALENDAR_LOCATION)}&ctz=${TIMEZONE_CTZ}&src=${encodeURIComponent(ownerCalendarSrc)}&hl=es${remindersParam}&add=${encodeURIComponent(clientEmail)}`;
+
+            // 12. Construcción del enlace de WhatsApp
+            const whatsappEncodedText = encodeURIComponent(whatsappText); 
+            const whatsappUrl = `https://wa.me/${phoneForWhatsapp}?text=${whatsappEncodedText}`;
+            
+            // 13. Mostrar resultados
+            getElement('resumenTexto').textContent = whatsappText;
+            getElement('whatsappLink').href = whatsappUrl;
+            getElement('calendarLink').href = calendarUrl; 
+            getElement('debugUrlOutput').value = calendarUrl; 
+            
+            getElement('outputContainer').classList.remove('hidden');
+            
+            // 14. Auto-copiar Mensaje de WhatsApp
+            copyToClipboard('resumenTexto', 'Mensaje de WhatsApp');
+
+            // Desplazarse a los resultados
+            getElement('outputContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+
+        // --- INICIALIZACIÓN DE LA APP Y LISTENERS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialDate = getTodayDate();
+            // Horarios solicitados: 13:30 a 16:00
+            const initialStartTime = '13:30'; 
+            const initialEndTime = '16:00'; 
+            
+            // Inicializar campos de fecha y hora
+            getElement('appointmentDate').value = initialDate;
+            getElement('appointmentStartTime').value = initialStartTime;
+            getElement('appointmentEndTime').value = initialEndTime;
+            
+            // Inicializar abono con el valor por defecto del primer servicio ('Tatuaje': 0)
+            const initialService = getElement('serviceType').value;
+            getElement('abono').value = DEFAULT_ABONOS[initialService] || 0;
+
+
+            // Event Listeners
+            
+            // 1. Auto-calcular Hora de Término (si se cambia, el tiempo de 30 min se mantiene por si es útil)
+            getElement('appointmentStartTime').addEventListener('input', (e) => {
+                // Se mantiene la función por si la necesitas, pero ya no es el valor por defecto al cargar.
+                // getElement('appointmentEndTime').value = calculateDefaultEndTime(e.target.value);
+            });
+            
+            // 2. Auto-rellenar Abono al cambiar el servicio
+            getElement('serviceType').addEventListener('change', (e) => {
+                const selectedService = e.target.value;
+                const defaultAbono = DEFAULT_ABONOS[selectedService] || 0;
+                getElement('abono').value = defaultAbono;
+            });
+            
+            // 3. Botón de Generar
+            getElement('appointmentForm').addEventListener('submit', generateSummary);
+
+            // 4. Botón de Procesar Pegado
+            getElement('processPasteButton').addEventListener('click', processPastedData);
+        });
+    </script>
+</body>
+</html>
