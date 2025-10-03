@@ -28,6 +28,7 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--color-background);
         }
+        /* Fuerza el icono de calendario/reloj a ser visible en modo oscuro */
         .dark-input[type="date"]::-webkit-calendar-picker-indicator,
         .dark-input[type="time"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
@@ -137,11 +138,11 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Inicio (24h) <span class="text-[#e11d48]">*</span></label>
-                    <input type="time" id="appointmentStartTime" class="w-full dark-input dark-input shadow-sm" required step="900">
+                    <input type="time" id="appointmentStartTime" class="w-full dark-input dark-input shadow-sm" required step="900" value="15:30">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Término (24h) <span class="text-[#e11d48]">*</span></label>
-                    <input type="time" id="appointmentEndTime" class="w-full dark-input dark-input shadow-sm" required step="900">
+                    <input type="time" id="appointmentEndTime" class="w-full dark-input dark-input shadow-sm" required step="900" value="16:00">
                 </div>
             </div>
 
@@ -452,14 +453,6 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
         const getTodayDate = () => {
             return new Date().toISOString().slice(0, 10);
         };
-        const calculateDefaultEndTime = (startTime) => {
-            if (!startTime) return '';
-            const [hours, minutes] = startTime.split(':').map(Number);
-            const endTime = new Date(1970, 0, 1, hours, minutes + 30);
-            const endHours = String(endTime.getHours()).padStart(2, '0');
-            const endMinutes = String(endTime.getMinutes()).padStart(2, '0');
-            return `${endHours}:${endMinutes}`;
-        };
         const formatCalendarTimeLocal = (date, time) => {
             const [year, month, day] = date.split('-');
             const [hour, minute] = time.split(':');
@@ -564,7 +557,7 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
             }
         }
 
-        // --- FUNCIÓN AÑADIDA/CORREGIDA PARA COPIAR PLANTILLA ---
+        // --- FUNCIÓN PARA COPIAR PLANTILLA ---
         function copyPlantillaText() {
             const tempTextArea = document.createElement('textarea');
             tempTextArea.value = TEMPLATE_MESSAGE;
@@ -640,7 +633,6 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
             const manualDescription = getElement('description').value.trim();
             
             let clientEmail = getElement('clientEmail').value.trim();
-            // Lógica de fallback para agregar @gmail.com si el usuario olvidó el dominio (aunque ahora se pega completo, se mantiene por seguridad)
             if (clientEmail.indexOf('@') === -1 && clientEmail.length > 0) {
                  clientEmail = clientEmail + '@gmail.com'; 
             }
@@ -726,6 +718,8 @@ ${conditionalDetails}
             const endCalendarTime = formatCalendarTimeLocal(appointmentDate, appointmentEndTime);
             const remindersParam = `&reminders=[{"method":"popup","minutes":${REMINDER_MINUTES}}]`;
             const calendarTitle = `${serviceType} | ${clientName}${manualDescription ? ` (${manualDescription})` : ''} | Abono ${abonoFormateado}`;
+            
+            // LIMPIEZA CLAVE: Se eliminan asteriscos de negrita y otros símbolos que rompen el enlace de Calendar en móviles.
             const calendarDetailsCleaned = calendarDescriptionText 
                 .replace(/\*/g, '') 
                 .replace(/---/g, '\n-----\n') 
@@ -757,7 +751,7 @@ ${conditionalDetails}
         // --- INICIALIZACIÓN DE LA APP Y LISTENERS ---
         document.addEventListener('DOMContentLoaded', () => {
             const initialDate = getTodayDate();
-            // Horarios: 15:30 a 16:00
+            // Horas predefinidas según solicitud (24h)
             const initialStartTime = '15:30'; 
             const initialEndTime = '16:00'; 
             
@@ -773,23 +767,17 @@ ${conditionalDetails}
 
             // Event Listeners
             
-            // 1. Auto-calcular Hora de Término (Comentado)
-            getElement('appointmentStartTime').addEventListener('input', (e) => {
-                // Comentado para mantener el tiempo manual
-                // getElement('appointmentEndTime').value = calculateDefaultEndTime(e.target.value);
-            });
-            
-            // 2. Auto-rellenar Abono al cambiar el servicio
+            // Auto-rellenar Abono al cambiar el servicio
             getElement('serviceType').addEventListener('change', (e) => {
                 const selectedService = e.target.value;
                 const defaultAbono = DEFAULT_ABONOS[selectedService] || 0;
                 getElement('abono').value = defaultAbono;
             });
             
-            // 3. Botón de Generar
+            // Botón de Generar
             getElement('appointmentForm').addEventListener('submit', generateSummary);
 
-            // 4. Botón de Procesar Pegado
+            // Botón de Procesar Pegado
             getElement('processPasteButton').addEventListener('click', processPastedData);
         });
     </script>
