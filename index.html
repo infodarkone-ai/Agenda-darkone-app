@@ -136,11 +136,11 @@
                     <input type="date" id="appointmentDate" class="w-full dark-input dark-input shadow-sm" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Inicio (15:30 por defecto) <span class="text-[#e11d48]">*</span></label>
+                    <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Inicio (24h) <span class="text-[#e11d48]">*</span></label>
                     <input type="time" id="appointmentStartTime" class="w-full dark-input dark-input shadow-sm" required step="900">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Término (16:00 por defecto) <span class="text-[#e11d48]">*</span></label>
+                    <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Término (24h) <span class="text-[#e11d48]">*</span></label>
                     <input type="time" id="appointmentEndTime" class="w-full dark-input dark-input shadow-sm" required step="900">
                 </div>
             </div>
@@ -193,14 +193,14 @@
 
                     <h3 class="text-sm font-bold text-[#e5e5e5] mt-6 mb-2">Enlaces Rápidos para Cliente:</h3>
                     <div class="flex flex-wrap gap-3">
-                        <a id="reviewLink" target="_blank" rel="noopener noreferrer" class="whatsapp-util-button bg-[#e11d48] hover:bg-[#be123c]">
+                        <button id="reviewLinkButton" onclick="copyUrlToClipboard(REVIEWS_URL, 'Link de Reseñas de Google')" class="whatsapp-util-button bg-[#e11d48] hover:bg-[#be123c]">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 17.5V10"/><path d="M14 13.5l-2 2-2-2"/></svg>
-                            Link de Reseñas de Google
-                        </a>
-                        <a id="cuidadosLink" target="_blank" rel="noopener noreferrer" class="whatsapp-util-button bg-green-500 hover:bg-green-600">
+                            Copiar Link de Reseñas
+                        </button>
+                        <button id="cuidadosLinkButton" onclick="copyUrlToClipboard(CUIDADOS_URL, 'Link de Cuidados Post-Servicio')" class="whatsapp-util-button bg-green-500 hover:bg-green-600">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M15 2H9a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3Z"/><path d="M12 18h.01"/></svg>
-                            Link de Cuidados Post-Servicio
-                        </a>
+                            Copiar Link de Cuidados
+                        </button>
                     </div>
                     
                     <h3 class="text-sm font-bold text-[#e5e5e5] mt-6 mb-2">Utilidades de Pago y Plantilla:</h3>
@@ -423,7 +423,7 @@ Si desea agregar algo a su tatuaje, avise con anticipación para que sea conside
 Sea puntual.
 Evite acompañantes.
 *Preparación:* Se recomienda llegar con la *zona depilada* para evitar irritaciones.
-*Consumo:* *Coma e hidrátese* al menos *2 horas* antes. *Evite el consumo de destilados y aspirina 24 horas antes*.
+*Consumo:* *Coma e hidrátate* al menos *2 horas* antes. *Evite el consumo de destilados y aspirina 24 horas antes*.
 *Ropa:* Asegúrese de usar *ropa cómoda* para el procedimiento.
 *Cuidados:* Para el cuidado de su tatuaje *NO recomendamos bephantol*.
 
@@ -478,6 +478,7 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
             return toTz(dt);
         };
         
+        // Función general para copiar texto de un elemento
         function copyToClipboard(elementId, fieldName) {
             const element = getElement(elementId);
             const textToCopy = element.value || element.textContent; 
@@ -513,6 +514,39 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
                 statusDiv.classList.add('hidden');
             }, 5000);
         }
+        
+        // Nueva función para copiar una URL directamente (sin elemento HTML)
+        function copyUrlToClipboard(url, fieldName) {
+             const statusDiv = getElement('statusMessage');
+             try {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = url;
+                tempTextArea.style.position = 'absolute';
+                tempTextArea.style.left = '-9999px';
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                const success = document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+                
+                if (success) {
+                    statusDiv.classList.remove('bg-red-600', 'text-white', 'bg-amber-500', 'text-gray-900', 'hidden', 'bg-gray-600');
+                    statusDiv.classList.add('bg-[#e11d48]', 'text-white');
+                    statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> 
+                        <p class="text-sm font-medium">¡${fieldName} copiado al portapapeles! URL: ${url}</p>`;
+                } else {
+                    throw new Error('Fallback copy failed');
+                }
+            } catch (err) {
+                 statusDiv.classList.remove('hidden', 'bg-[#e11d48]', 'text-white', 'bg-gray-600');
+                 statusDiv.classList.add('bg-red-600', 'text-white');
+                 statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="text-sm font-medium">Error al copiar ${fieldName}. Copie la URL manualmente: ${url}</p>`;
+            }
+            statusDiv.classList.remove('hidden');
+            setTimeout(() => {
+                statusDiv.classList.add('hidden');
+            }, 5000);
+        }
+
 
         // --- FUNCIONES DE BOTONES DE UTILIDAD ---
         function toggleTransferData() {
@@ -530,6 +564,7 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
             }
         }
 
+        // --- FUNCIÓN AÑADIDA/CORREGIDA PARA COPIAR PLANTILLA ---
         function copyPlantillaText() {
             const tempTextArea = document.createElement('textarea');
             tempTextArea.value = TEMPLATE_MESSAGE;
@@ -560,6 +595,7 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
             }
 
             const extractValue = (label) => {
+                // Regex mejorada para manejar acentos y mayúsculas
                 const regex = new RegExp(`(${label}|${label.normalize("NFD").replace(/[\u0300-\u036f]/g, "")})\\s*:\\s*(.*?)(?=\\n|$)`, 'i');
                 const match = pastedText.match(regex);
                 return match && match[2] ? match[2].trim() : '';
@@ -581,7 +617,6 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
             // 3. Rellenar los campos del formulario
             if (name) getElement('clientName').value = name;
             if (phone) getElement('clientPhone').value = phone;
-            // CAMBIO SOLICITADO: Pegar el correo completo (sin modificar el dominio)
             if (email) getElement('clientEmail').value = email; 
 
             // 4. Feedback visual
@@ -710,16 +745,11 @@ ${conditionalDetails}
             getElement('calendarLink').href = calendarUrl; 
             getElement('debugUrlOutput').value = calendarUrl; 
             
-            // ASIGNACIÓN DE LINKS RÁPIDOS
-            getElement('reviewLink').href = REVIEWS_URL;
-            getElement('cuidadosLink').href = CUIDADOS_URL;
-            
-            getElement('outputContainer').classList.remove('hidden');
-            
             // 14. Auto-copiar Mensaje de WhatsApp
             copyToClipboard('resumenTexto', 'Mensaje de WhatsApp');
 
             // Desplazarse a los resultados
+            getElement('outputContainer').classList.remove('hidden');
             getElement('outputContainer').scrollIntoView({ behavior: 'smooth' });
         }
 
