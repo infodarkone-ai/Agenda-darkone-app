@@ -137,11 +137,11 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Inicio (15:30 por defecto) <span class="text-[#e11d48]">*</span></label>
-                    <input type="time" id="appointmentStartTime" class="w-full dark-input dark-input shadow-sm" required>
+                    <input type="time" id="appointmentStartTime" class="w-full dark-input dark-input shadow-sm" required step="900">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Término (16:00 por defecto) <span class="text-[#e11d48]">*</span></label>
-                    <input type="time" id="appointmentEndTime" class="w-full dark-input dark-input shadow-sm" required>
+                    <input type="time" id="appointmentEndTime" class="w-full dark-input dark-input shadow-sm" required step="900">
                 </div>
             </div>
 
@@ -202,6 +202,26 @@
                             Link de Cuidados Post-Servicio
                         </a>
                     </div>
+                    
+                    <h3 class="text-sm font-bold text-[#e5e5e5] mt-6 mb-2">Utilidades de Pago y Plantilla:</h3>
+                    <div class="flex flex-wrap gap-3">
+                        <button id="toggleTransferButton" onclick="toggleTransferData()" class="whatsapp-util-button bg-blue-700 hover:bg-blue-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                            Datos de Transferencia
+                        </button>
+                        
+                        <button id="copyTemplateButton" onclick="copyPlantillaText()" class="whatsapp-util-button bg-gray-600 hover:bg-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Mensaje Plantilla Auto-Relleno
+                        </button>
+                    </div>
+
+                    <div id="transferDataContainer" class="mt-4 p-4 text-sm text-[#e5e5e5] bg-[#121212] rounded border border-[#3a3a3a] hidden">
+                        <pre id="transferDataText" class="whitespace-pre-wrap font-mono"></pre>
+                        <button onclick="copyToClipboard('transferDataText', 'Datos de Transferencia')" class="mt-3 w-full flex justify-center items-center py-2 px-4 rounded-lg shadow-md text-xs font-medium text-white transition duration-200 bg-[#e11d48] hover:bg-[#be123c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#e11d48] focus:ring-offset-[#121212]">
+                            Copiar Datos
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -217,7 +237,28 @@
         const TIMEZONE_CTZ = 'America/Santiago'; 
         const REMINDER_MINUTES = 180;
         const CUIDADOS_URL = 'https://darkone.cl/cuidados/';
+        const REVIEWS_URL = 'https://g.page/r/CWj6G402t1iNEB0/review'; 
         const getFormLink = (url) => url; 
+
+        // --- CONSTANTES DE UTILIDAD ACTUALIZADAS ---
+        const TRANSFER_DATA = `
+Dark One
+77722038-1
+Mercado Pago
+Cuenta Vista
+1035883846
+darkonecl@gmail.com
+`.trim();
+
+        const TEMPLATE_MESSAGE = `
+🙂 ¡Perfecto! Para agendar, por favor envíame los siguientes datos.
+📝 Copia este mensaje y rellena después de los dos puntos (:)
+
+Nombre: 
+Número WhatsApp: 
+Correo electrónico:
+`.trim();
+
 
         // --- ABONOS POR DEFECTO ---
         const DEFAULT_ABONOS = {
@@ -228,7 +269,7 @@
             'Reserva de Retoques': 0,
         };
 
-        // --- DEFINICIÓN DE TEXTOS LARGOS ---
+        // --- DEFINICIÓN DE TEXTOS LARGOS (Mantenidos para Calendar) ---
         const PIERCING_DETAILS = `
 *INFORMACIÓN ESENCIAL – PIERCING (DARK ONE)*
 ---
@@ -293,12 +334,12 @@ Para el cuidado de su tatuaje *NO recomendamos bephantol*.
 *Riesgos:* Todos los procedimientos presentan *riesgos* (lesiones dérmicas, infecciones, pérdida de color y alergias).
 Estos riesgos *aumentan* si:
 - No sigue nuestros cuidados (se informarán verbalmente y por escrito en www.darkone.cl).
-- Realiza deporte, toca con manos sucias, sufre falta de hidratación, o se expone a ambientes inadecuados (saunas, solárium, piscinas, etc.).
+- Toca con manos sucias, sufre falta de hidratación, o se expone a ambientes inadecuados (saunas, solárium, piscinas, etc.).
 *Complicaciones:* Debe dar aviso al estudio Dark One / Santiago Ink (Contacto +56932237670) y *asistir a un centro médico o profesional de salud*.
 
 Productos de primera calidad. Veganos y Cruelty Free. DARK ONE es marca registrada de SANTIAGO INK TATUAJES & DARK CANDLES ®. Desde 2010.
         `.trim();
-        
+
         const GRANULOMA_DETAILS = `
 *INFORMACIÓN ESENCIAL – TRATAMIENTO DE GRANULOMAS (DARK ONE)*
 ---
@@ -326,7 +367,7 @@ Todos los procedimientos presentan *riesgos* de reacciones dérmicas o infeccion
 *Cuidados:* Se le informará de los cuidados posteriores verbalmente y los puede encontrar por escrito en nuestra página web. www.darkone.cl
 En caso de complicaciones o reacciones adversas, debe dar *aviso inmediato* a Dark One / Santiago Ink y *asistir a un centro médico o profesional de salud*.
 
-Productos de la más alta calidad – DARK ONE / DARK CANDLES & SANTIAGO INK TATUAJES® Desde 2010.
+Productos de la más alta calidad – DARK ONE / DARK CANDLES & SANTIAGO INK TATUAJES® Desde 2010
         `.trim();
 
         const MENOR_EDAD_DETAILS = `
@@ -368,7 +409,7 @@ Productos de la más alta calidad – DARK ONE / DARK CANDLES & SANTIAGO INK TAT
 *RESERVA Y CONDICIONES DE GARANTÍA*
 Las citas están destinadas a retoques e incluyen tiempo para montaje.
 *Cambios:* Debe avisar hasta con *48 horas* de anticipación. De lo contrario, *perderá la posibilidad de reagendar sin costo*.
-*Puntualidad:* Si llega tarde, perderá tiempo. Podría necesitar reagendar, lo cual tiene un *costo adicional*.
+*Puntualidad:* Si llega tarde, perderá tiempo de su sesión; podría necesitar reagendar, lo cual tiene un *costo adicional*.
 *Si no asiste a su cita, pierde la garantía y la posibilidad de reagendar sin costo*.
 *Procedimientos extras:* Cualquier procedimiento adicional al retoque implica *cobros extras* (materiales, tiempo).
 
@@ -376,7 +417,7 @@ Las citas están destinadas a retoques e incluyen tiempo para montaje.
 Si desea agregar algo a su tatuaje, avise con anticipación para que sea considerado en el tiempo de su cita.
 *Reagendar y Extra para negro* tiene un costo mínimo adicional de *$15.000* que se deposita por adelantado.
 *Reagendar y Extra para color* tiene un costo mínimo adicional de *$25.000* que se deposita por adelantado.
-Si no asiste a su cita, pierde el adicional depositado.
+*Si no asiste a su cita, pierde el adicional depositado*.
 
 *PREPARACIÓN Y CONSEJOS*
 Sea puntual.
@@ -453,20 +494,57 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
                 document.body.removeChild(tempTextArea);
 
                 if (success) {
-                    statusDiv.classList.remove('bg-red-600', 'text-white', 'bg-amber-500', 'text-gray-900', 'hidden');
+                    statusDiv.classList.remove('bg-red-600', 'text-white', 'bg-amber-500', 'text-gray-900', 'hidden', 'bg-gray-600');
                     statusDiv.classList.add('bg-[#e11d48]', 'text-white');
                     statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> 
                         <p class="text-sm font-medium">¡${fieldName} copiado al portapapeles!</p>`;
                 } else {
-                    statusDiv.classList.remove('hidden', 'bg-[#e11d48]', 'text-white');
+                    statusDiv.classList.remove('hidden', 'bg-[#e11d48]', 'text-white', 'bg-gray-600');
                     statusDiv.classList.add('bg-amber-500', 'text-gray-900');
                     statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="text-sm font-medium">Error al copiar ${fieldName}. Copie manualmente desde el recuadro.</p>`;
                 }
             } catch (err) {
-                 statusDiv.classList.remove('hidden', 'bg-[#e11d48]', 'text-white');
+                 statusDiv.classList.remove('hidden', 'bg-[#e11d48]', 'text-white', 'bg-gray-600');
                  statusDiv.classList.add('bg-red-600', 'text-white');
                  statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="text-sm font-medium">Error de navegador. Copie el texto manualmente.</p>`;
             }
+            statusDiv.classList.remove('hidden');
+            setTimeout(() => {
+                statusDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        // --- FUNCIONES DE BOTONES DE UTILIDAD ---
+        function toggleTransferData() {
+            const container = getElement('transferDataContainer');
+            const button = getElement('toggleTransferButton');
+            
+            if (container.classList.contains('hidden')) {
+                // Asigna el texto limpio
+                getElement('transferDataText').textContent = TRANSFER_DATA;
+                container.classList.remove('hidden');
+                button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Ocultar Datos de Transferencia`;
+            } else {
+                container.classList.add('hidden');
+                button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>Datos de Transferencia`;
+            }
+        }
+
+        function copyPlantillaText() {
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = TEMPLATE_MESSAGE;
+            tempTextArea.style.position = 'absolute';
+            tempTextArea.style.left = '-9999px';
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            
+            const statusDiv = getElement('statusMessage');
+            statusDiv.classList.remove('bg-red-600', 'text-white', 'bg-amber-500', 'text-gray-900', 'hidden', 'bg-[#e11d48]');
+            statusDiv.classList.add('bg-gray-600', 'text-white');
+            statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> 
+                <p class="text-sm font-medium">¡Plantilla de Auto-Relleno copiada al portapapeles!</p>`;
             statusDiv.classList.remove('hidden');
             setTimeout(() => {
                 statusDiv.classList.add('hidden');
@@ -503,7 +581,8 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
             // 3. Rellenar los campos del formulario
             if (name) getElement('clientName').value = name;
             if (phone) getElement('clientPhone').value = phone;
-            if (email) getElement('clientEmail').value = email.replace(/@(gmail|hotmail|outlook)\.com/gi, ''); 
+            // CAMBIO SOLICITADO: Pegar el correo completo (sin modificar el dominio)
+            if (email) getElement('clientEmail').value = email; 
 
             // 4. Feedback visual
             alert('¡Datos de Nombre, Número WhatsApp y Correo electrónico rellenados exitosamente!');
@@ -526,6 +605,7 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
             const manualDescription = getElement('description').value.trim();
             
             let clientEmail = getElement('clientEmail').value.trim();
+            // Lógica de fallback para agregar @gmail.com si el usuario olvidó el dominio (aunque ahora se pega completo, se mantiene por seguridad)
             if (clientEmail.indexOf('@') === -1 && clientEmail.length > 0) {
                  clientEmail = clientEmail + '@gmail.com'; 
             }
@@ -536,7 +616,7 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
              if (!clientName || !clientEmail || !appointmentDate || !appointmentStartTime || !appointmentEndTime || !clientPhone || clientPhone.length < 10) {
                  const errorText = (!clientPhone || clientPhone.length < 10) ? 'Faltan campos obligatorios o el número de WhatsApp es demasiado corto (debe incluir +569...)' : 'Faltan campos obligatorios por rellenar.';
                  const statusDiv = getElement('statusMessage');
-                 statusDiv.classList.remove('hidden', 'bg-amber-500', 'text-gray-900', 'bg-[#e11d48]', 'text-white');
+                 statusDiv.classList.remove('hidden', 'bg-amber-500', 'text-gray-900', 'bg-[#e11d48]', 'text-white', 'bg-gray-600');
                  statusDiv.classList.add('bg-red-600', 'text-white');
                  statusDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="text-sm font-medium">${errorText}</p>`;
                  setTimeout(() => { statusDiv.classList.add('hidden'); }, 5000);
@@ -550,7 +630,7 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
             }
             const phoneForWhatsapp = normalizedPhone.substring(1); 
 
-            // 4. Cargar Contenido Condicional
+            // 4. Cargar Contenido Condicional (Solo se usará para el Calendar)
             const content = SERVICE_CONTENT[serviceType] || SERVICE_CONTENT['Piercing']; 
             const { details: conditionalDetails } = content;
 
@@ -576,24 +656,21 @@ ${abonoLine}
 
 ${manualDescription ? `📝 *Notas de Servicio:* ${manualDescription}\n` : ''}`.trim();
 
-            const condicionesBloque = conditionalDetails;
             
-            // 7. Generación del Mensaje de WhatsApp
+            // 7. Generación del Mensaje de WhatsApp (¡SOLO SALUDO Y DATOS!)
             const whatsappText = `
 *✨ ¡Gracias por preferirnos, ${clientName}! Tu cita está confirmada: ✨*
 ---
 ${datosCitaBloque}
----
-${condicionesBloque}
-            `.trim();
+`.trim();
 
-            // 8. Generación del Mensaje de Calendar
+            // 8. Generación del Mensaje de Calendar (Aquí SÍ se incluyen las condiciones)
             const calendarDescriptionText = `
-*✨ ¡Gracias por preferirnos, ${clientName}! Tu cita está confirmada: ✨*
----
-${condicionesBloque}
+*✨ Cita Confirmada: ${clientName} ✨*
 ---
 ${datosCitaBloque}
+---
+${conditionalDetails}
             `.trim();
 
             // 9. Determinar Calendar Source ID (SRC)
@@ -633,6 +710,10 @@ ${datosCitaBloque}
             getElement('calendarLink').href = calendarUrl; 
             getElement('debugUrlOutput').value = calendarUrl; 
             
+            // ASIGNACIÓN DE LINKS RÁPIDOS
+            getElement('reviewLink').href = REVIEWS_URL;
+            getElement('cuidadosLink').href = CUIDADOS_URL;
+            
             getElement('outputContainer').classList.remove('hidden');
             
             // 14. Auto-copiar Mensaje de WhatsApp
@@ -646,8 +727,8 @@ ${datosCitaBloque}
         // --- INICIALIZACIÓN DE LA APP Y LISTENERS ---
         document.addEventListener('DOMContentLoaded', () => {
             const initialDate = getTodayDate();
-            // Horarios solicitados: 15:30 a 16:00
-            const initialStartTime = '15:30'; // <-- NUEVO VALOR
+            // Horarios: 15:30 a 16:00
+            const initialStartTime = '15:30'; 
             const initialEndTime = '16:00'; 
             
             // Inicializar campos de fecha y hora
@@ -662,11 +743,9 @@ ${datosCitaBloque}
 
             // Event Listeners
             
-            // 1. Auto-calcular Hora de Término (si se cambia, el tiempo de 30 min se mantiene por si es útil)
+            // 1. Auto-calcular Hora de Término (Comentado)
             getElement('appointmentStartTime').addEventListener('input', (e) => {
-                // Si el usuario cambia la hora de inicio, actualiza la hora final por defecto (30 minutos después)
-                // Si prefieres que al cambiar la hora de inicio, la hora final se mantenga en 16:00 o quede vacía, 
-                // simplemente elimina o comenta la línea de abajo:
+                // Comentado para mantener el tiempo manual
                 // getElement('appointmentEndTime').value = calculateDefaultEndTime(e.target.value);
             });
             
