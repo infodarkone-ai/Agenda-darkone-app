@@ -28,9 +28,8 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--color-background);
         }
-        /* Fuerza el icono de calendario/reloj a ser visible en modo oscuro */
-        .dark-input[type="date"]::-webkit-calendar-picker-indicator,
-        .dark-input[type="time"]::-webkit-calendar-picker-indicator {
+        /* Fuerza el icono de calendario a ser visible en modo oscuro */
+        .dark-input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
         }
         .dark-card {
@@ -87,6 +86,46 @@
                 PROCESAR Y RELLENAR CAMPOS
             </button>
         </div>
+        <div class="dark-card p-6 sm:p-8 shadow-2xl mb-4">
+            <h2 class="text-xl font-bold text-[#e11d48] mb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-[#e11d48]"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Acciones y Utilidades Rápidas
+            </h2>
+            
+            <div id="statusMessage" class="mb-4 p-3 rounded-lg flex items-center hidden"></div>
+
+            <h3 class="text-sm font-bold text-[#e5e5e5] mb-2">Enlaces de Información para Cliente:</h3>
+            <div class="flex flex-wrap gap-3 mb-4">
+                <button id="reviewLinkButton" onclick="copyUrlToClipboard(REVIEWS_URL, 'Link de Reseñas de Google')" class="whatsapp-util-button bg-[#e11d48] hover:bg-[#be123c]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 17.5V10"/><path d="M14 13.5l-2 2-2-2"/></svg>
+                    Copiar Link de Reseñas
+                </button>
+                <button id="cuidadosLinkButton" onclick="copyUrlToClipboard(CUIDADOS_URL, 'Link de Cuidados Post-Servicio')" class="whatsapp-util-button bg-green-500 hover:bg-green-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M15 2H9a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3Z"/><path d="M12 18h.01"/></svg>
+                    Copiar Link de Cuidados
+                </button>
+            </div>
+            
+            <h3 class="text-sm font-bold text-[#e5e5e5] mb-2">Utilidades de Pago y Plantilla:</h3>
+            <div class="flex flex-wrap gap-3">
+                <button id="toggleTransferButton" onclick="toggleTransferData()" class="whatsapp-util-button bg-blue-700 hover:bg-blue-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                    Datos de Transferencia
+                </button>
+                
+                <button id="copyTemplateButton" onclick="copyPlantillaText()" class="whatsapp-util-button bg-gray-600 hover:bg-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Mensaje Plantilla Auto-Relleno
+                </button>
+            </div>
+
+            <div id="transferDataContainer" class="mt-4 p-4 text-sm text-[#e5e5e5] bg-[#121212] rounded border border-[#3a3a3a] hidden">
+                <pre id="transferDataText" class="whitespace-pre-wrap font-mono"></pre>
+                <button onclick="copyToClipboard('transferDataText', 'Datos de Transferencia')" class="mt-3 w-full flex justify-center items-center py-2 px-4 rounded-lg shadow-md text-xs font-medium text-white transition duration-200 bg-[#e11d48] hover:bg-[#be123c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#e11d48] focus:ring-offset-[#121212]">
+                    Copiar Datos
+                </button>
+            </div>
+        </div>
         <form id="appointmentForm" class="dark-card p-6 sm:p-8 shadow-2xl space-y-4"> 
             <h2 class="text-2xl font-bold text-[#e5e5e5] border-b border-[#3a3a3a] pb-2">Detalles de la Cita</h2>
 
@@ -138,14 +177,31 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Inicio (24h) <span class="text-[#e11d48]">*</span></label>
-                    <input type="time" id="appointmentStartTime" class="w-full dark-input dark-input shadow-sm" required step="900" value="15:30">
+                    <div class="flex gap-2">
+                        <select id="appointmentStartHour" class="w-1/2 dark-select shadow-sm" required>
+                            </select>
+                        <select id="appointmentStartMinute" class="w-1/2 dark-select shadow-sm" required>
+                            <option value="00">00 min</option>
+                            <option value="15">15 min</option>
+                            <option value="30">30 min</option>
+                            <option value="45">45 min</option>
+                        </select>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#e5e5e5] mb-0.5">Hora de Término (24h) <span class="text-[#e11d48]">*</span></label>
-                    <input type="time" id="appointmentEndTime" class="w-full dark-input dark-input shadow-sm" required step="900" value="16:00">
+                    <div class="flex gap-2">
+                        <select id="appointmentEndHour" class="w-1/2 dark-select shadow-sm" required>
+                            </select>
+                        <select id="appointmentEndMinute" class="w-1/2 dark-select shadow-sm" required>
+                            <option value="00">00 min</option>
+                            <option value="15">15 min</option>
+                            <option value="30">30 min</option>
+                            <option value="45">45 min</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-
             <button type="submit" class="w-full flex justify-center items-center py-3 px-4 rounded-lg shadow-md text-lg font-medium text-white transition duration-200 bg-[#e11d48] hover:bg-[#be123c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#e11d48] focus:ring-offset-[#121212]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-white"><path d="M8 2v4"/><path d="M16 2v4"/><path d="M21 21H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2z"/><path d="M3 11h18"/></svg>
                 GENERAR MENSAJE Y ENLACES
@@ -153,8 +209,6 @@
         </form>
         <div id="outputContainer" class="mt-8 dark-card p-6 sm:p-8 shadow-2xl hidden">
             
-            <div id="statusMessage" class="mb-4 p-3 rounded-lg flex items-center hidden"></div>
-
             <h2 class="text-2xl font-bold text-[#e11d48] mb-4 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-[#e11d48]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
                 Acciones Finales y Vista Previa
@@ -171,7 +225,6 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M8 2v4"/><path d="M16 2v4"/><path d="M21 21H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2z"/><path d="M3 11h18"/></svg>
                         ABRIR Y GUARDAR CITA EN CALENDAR
                     </a>
-                    <textarea id="debugUrlOutput" class="hidden" rows="1" readonly></textarea>
                 </div>
 
                 <div class="bg-[#1e1e1e] p-4 rounded-lg border border-[#3a3a3a]">
@@ -189,38 +242,6 @@
                         <button id="copyButton" onclick="copyToClipboard('resumenTexto', 'Mensaje de WhatsApp')" class="inline-flex items-center text-sm font-semibold text-white bg-[#e11d48] hover:bg-[#be123c] px-3 py-1.5 rounded-lg transition duration-150">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-white"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                             Copiar Mensaje
-                        </button>
-                    </div>
-
-                    <h3 class="text-sm font-bold text-[#e5e5e5] mt-6 mb-2">Enlaces Rápidos para Cliente:</h3>
-                    <div class="flex flex-wrap gap-3">
-                        <button id="reviewLinkButton" onclick="copyUrlToClipboard(REVIEWS_URL, 'Link de Reseñas de Google')" class="whatsapp-util-button bg-[#e11d48] hover:bg-[#be123c]">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 17.5V10"/><path d="M14 13.5l-2 2-2-2"/></svg>
-                            Copiar Link de Reseñas
-                        </button>
-                        <button id="cuidadosLinkButton" onclick="copyUrlToClipboard(CUIDADOS_URL, 'Link de Cuidados Post-Servicio')" class="whatsapp-util-button bg-green-500 hover:bg-green-600">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M15 2H9a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3Z"/><path d="M12 18h.01"/></svg>
-                            Copiar Link de Cuidados
-                        </button>
-                    </div>
-                    
-                    <h3 class="text-sm font-bold text-[#e5e5e5] mt-6 mb-2">Utilidades de Pago y Plantilla:</h3>
-                    <div class="flex flex-wrap gap-3">
-                        <button id="toggleTransferButton" onclick="toggleTransferData()" class="whatsapp-util-button bg-blue-700 hover:bg-blue-800">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-                            Datos de Transferencia
-                        </button>
-                        
-                        <button id="copyTemplateButton" onclick="copyPlantillaText()" class="whatsapp-util-button bg-gray-600 hover:bg-gray-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            Mensaje Plantilla Auto-Relleno
-                        </button>
-                    </div>
-
-                    <div id="transferDataContainer" class="mt-4 p-4 text-sm text-[#e5e5e5] bg-[#121212] rounded border border-[#3a3a3a] hidden">
-                        <pre id="transferDataText" class="whitespace-pre-wrap font-mono"></pre>
-                        <button onclick="copyToClipboard('transferDataText', 'Datos de Transferencia')" class="mt-3 w-full flex justify-center items-center py-2 px-4 rounded-lg shadow-md text-xs font-medium text-white transition duration-200 bg-[#e11d48] hover:bg-[#be123c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#e11d48] focus:ring-offset-[#121212]">
-                            Copiar Datos
                         </button>
                     </div>
                 </div>
@@ -335,7 +356,7 @@ Para el cuidado de su tatuaje *NO recomendamos bephantol*.
 *Riesgos:* Todos los procedimientos presentan *riesgos* (lesiones dérmicas, infecciones, pérdida de color y alergias).
 Estos riesgos *aumentan* si:
 - No sigue nuestros cuidados (se informarán verbalmente y por escrito en www.darkone.cl).
-- Toca con manos sucias, sufre falta de hidratación, o se expone a ambientes inadecuados (saunas, solárium, piscinas, etc.).
+- Toca con manos sucias, sufre falta de hidratación, o se expone a ambientes inadecuados (saunas, solárium, piscinas).
 *Complicaciones:* Debe dar aviso al estudio Dark One / Santiago Ink (Contacto +56932237670) y *asistir a un centro médico o profesional de salud*.
 
 Productos de primera calidad. Veganos y Cruelty Free. DARK ONE es marca registrada de SANTIAGO INK TATUAJES & DARK CANDLES ®. Desde 2010.
@@ -475,6 +496,7 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
         function copyToClipboard(elementId, fieldName) {
             const element = getElement(elementId);
             const textToCopy = element.value || element.textContent; 
+            // Usamos el statusMessage del bloque de Utilidades
             const statusDiv = getElement('statusMessage');
             
             try {
@@ -510,6 +532,7 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
         
         // Nueva función para copiar una URL directamente (sin elemento HTML)
         function copyUrlToClipboard(url, fieldName) {
+             // Usamos el statusMessage del bloque de Utilidades
              const statusDiv = getElement('statusMessage');
              try {
                 const tempTextArea = document.createElement('textarea');
@@ -538,6 +561,26 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
             setTimeout(() => {
                 statusDiv.classList.add('hidden');
             }, 5000);
+        }
+
+        // --- NUEVA FUNCIÓN: GENERAR OPCIONES DE HORA (00 a 23) ---
+        function generateTimeOptions() {
+            const startHourSelect = getElement('appointmentStartHour');
+            const endHourSelect = getElement('appointmentEndHour');
+            
+            // Función de ayuda para añadir las 24 horas
+            const addHours = (select) => {
+                for (let i = 0; i < 24; i++) {
+                    const hour = i < 10 ? `0${i}` : `${i}`; // Formato 24h con cero inicial
+                    const option = document.createElement('option');
+                    option.value = hour;
+                    option.textContent = hour;
+                    select.appendChild(option);
+                }
+            };
+            
+            addHours(startHourSelect);
+            addHours(endHourSelect);
         }
 
 
@@ -622,13 +665,22 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
         function generateSummary(e) {
             e.preventDefault(); 
 
-            // 1. Obtener valores
+            // 1. Obtener valores de los NUEVOS SELECTORES
             const clientName = getElement('clientName').value.trim();
             const serviceType = getElement('serviceType').value; 
             const serviceName = serviceType;
             const appointmentDate = getElement('appointmentDate').value; 
-            const appointmentStartTime = getElement('appointmentStartTime').value;
-            const appointmentEndTime = getElement('appointmentEndTime').value;
+            
+            // Lógica para combinar Hora y Minuto de inicio
+            const startHour = getElement('appointmentStartHour').value;
+            const startMinute = getElement('appointmentStartMinute').value;
+            const appointmentStartTime = `${startHour}:${startMinute}`;
+
+            // Lógica para combinar Hora y Minuto de término
+            const endHour = getElement('appointmentEndHour').value;
+            const endMinute = getElement('appointmentEndMinute').value;
+            const appointmentEndTime = `${endHour}:${endMinute}`;
+            
             const abono = parseInt(getElement('abono').value) || 0; 
             const manualDescription = getElement('description').value.trim();
             
@@ -691,7 +743,7 @@ ${manualDescription ? `📝 *Notas de Servicio:* ${manualDescription}\n` : ''}`.
 ${datosCitaBloque}
 `.trim();
 
-            // 8. Generación del Mensaje de Calendar (¡ORDEN SOLICITADO APLICADO AQUÍ!)
+            // 8. Generación del Mensaje de Calendar (ORDEN FINAL: ENCABEZADO -> CONDICIONES -> DATOS)
             const calendarDescriptionText = `
 *✨ Cita Confirmada: ${clientName} ✨*
 ---
@@ -720,7 +772,7 @@ ${datosCitaBloque}
             const remindersParam = `&reminders=[{"method":"popup","minutes":${REMINDER_MINUTES}}]`;
             const calendarTitle = `${serviceType} | ${clientName}${manualDescription ? ` (${manualDescription})` : ''} | Abono ${abonoFormateado}`;
             
-            // LIMPIEZA CLAVE: Se mantiene la limpieza para garantizar la funcionalidad del enlace en todos los dispositivos.
+            // LIMPIEZA CLAVE: Mantenemos la limpieza de asteriscos y emojis para la URL.
             const calendarDetailsCleaned = calendarDescriptionText 
                 .replace(/\*/g, '') 
                 .replace(/---/g, '\n-----\n') 
@@ -738,7 +790,6 @@ ${datosCitaBloque}
             getElement('resumenTexto').textContent = whatsappText;
             getElement('whatsappLink').href = whatsappUrl;
             getElement('calendarLink').href = calendarUrl; 
-            getElement('debugUrlOutput').value = calendarUrl; 
             
             // 14. Auto-copiar Mensaje de WhatsApp
             copyToClipboard('resumenTexto', 'Mensaje de WhatsApp');
@@ -752,14 +803,24 @@ ${datosCitaBloque}
         // --- INICIALIZACIÓN DE LA APP Y LISTENERS ---
         document.addEventListener('DOMContentLoaded', () => {
             const initialDate = getTodayDate();
-            // Horas predefinidas según solicitud (24h)
-            const initialStartTime = '15:30'; 
-            const initialEndTime = '16:00'; 
             
-            // Inicializar campos de fecha y hora
+            // Inicializar campo de fecha
             getElement('appointmentDate').value = initialDate;
-            getElement('appointmentStartTime').value = initialStartTime;
-            getElement('appointmentEndTime').value = initialEndTime;
+            
+            // 1. Generar las opciones de horas 00 a 23
+            generateTimeOptions();
+
+            // 2. Horas predefinidas (usando los nuevos IDs)
+            const initialStartHour = '15'; 
+            const initialStartMinute = '30';
+            const initialEndHour = '16'; 
+            const initialEndMinute = '00'; 
+
+            // 3. Inicializar campos de hora y minuto
+            getElement('appointmentStartHour').value = initialStartHour;
+            getElement('appointmentStartMinute').value = initialStartMinute;
+            getElement('appointmentEndHour').value = initialEndHour;
+            getElement('appointmentEndMinute').value = initialEndMinute;
             
             // Inicializar abono con el valor por defecto del primer servicio ('Tatuaje': 0)
             const initialService = getElement('serviceType').value;
