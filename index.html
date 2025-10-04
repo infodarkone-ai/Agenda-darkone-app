@@ -424,7 +424,7 @@ Si desea agregar algo a su tatuaje, avise con anticipación para que sea conside
 Sea puntual.
 Evite acompañantes.
 *Preparación:* Se recomienda llegar con la *zona depilada* para evitar irritaciones.
-*Consumo:* *Coma e hidrátate* al menos *2 horas* antes. *Evite el consumo de destilados y aspirina 24 horas antes*.
+*Consumo:* *Coma e hidrátese* al menos *2 horas* antes. *Evite el consumo de destilados y aspirina 24 horas antes*.
 *Ropa:* Asegúrese de usar *ropa cómoda* para el procedimiento.
 *Cuidados:* Para el cuidado de su tatuaje *NO recomendamos bephantol*.
 
@@ -657,7 +657,7 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
             }
             const phoneForWhatsapp = normalizedPhone.substring(1); 
 
-            // 4. Cargar Contenido Condicional (Solo se usará para el Calendar)
+            // 4. Cargar Contenido Condicional 
             const content = SERVICE_CONTENT[serviceType] || SERVICE_CONTENT['Piercing']; 
             const { details: conditionalDetails } = content;
 
@@ -671,7 +671,6 @@ DARK ONE es una marca registrada y creada por la empresa SANTIAGO INK TATUAJES &
                 : '';
                 
             const datosCitaBloque = `
-*DATOS DE LA CITA*
 👤 *Cliente:* ${clientName}
 📧 *Correo:* ${clientEmail}
 📱 *Teléfono:* ${clientPhone} 
@@ -688,16 +687,18 @@ ${manualDescription ? `📝 *Notas de Servicio:* ${manualDescription}\n` : ''}`.
             const whatsappText = `
 *✨ ¡Gracias por preferirnos, ${clientName}! Tu cita está confirmada: ✨*
 ---
+*DATOS DE LA CITA*
 ${datosCitaBloque}
 `.trim();
 
-            // 8. Generación del Mensaje de Calendar (Aquí SÍ se incluyen las condiciones)
+            // 8. Generación del Mensaje de Calendar (¡ORDEN SOLICITADO APLICADO AQUÍ!)
             const calendarDescriptionText = `
 *✨ Cita Confirmada: ${clientName} ✨*
 ---
-${datosCitaBloque}
----
 ${conditionalDetails}
+---
+*DATOS DE LA CITA*
+${datosCitaBloque}
             `.trim();
 
             // 9. Determinar Calendar Source ID (SRC)
@@ -719,7 +720,7 @@ ${conditionalDetails}
             const remindersParam = `&reminders=[{"method":"popup","minutes":${REMINDER_MINUTES}}]`;
             const calendarTitle = `${serviceType} | ${clientName}${manualDescription ? ` (${manualDescription})` : ''} | Abono ${abonoFormateado}`;
             
-            // LIMPIEZA CLAVE: Se eliminan asteriscos de negrita y otros símbolos que rompen el enlace de Calendar en móviles.
+            // LIMPIEZA CLAVE: Se mantiene la limpieza para garantizar la funcionalidad del enlace en todos los dispositivos.
             const calendarDetailsCleaned = calendarDescriptionText 
                 .replace(/\*/g, '') 
                 .replace(/---/g, '\n-----\n') 
